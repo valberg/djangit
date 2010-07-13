@@ -40,9 +40,7 @@ def show_repo(request, repo, ref):
     # References
 
     refs = []
-   
-    print r.refs.as_dict()
-
+    
     for e in r.refs.as_dict():
         if e == "HEAD":
             pass
