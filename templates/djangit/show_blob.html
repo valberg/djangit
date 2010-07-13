@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <h3>{{ repo }}</h3>
+
+    Blob:
+    <pre>
+        {{ blob|linenumbers|linebreaks }}
+    </pre>
+
+{% endblock %}

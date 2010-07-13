@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <h3>{{ repo }} : {{ ref }}</h3>
+
+    Latest commit:
+    {% include "djangit/commit_info.html" %}
+
+    <hr />
+    Branches:
+
+    <ul>
+        {% for r in refs %}
+            <li>
+                {{ r }} - 
+                <a href="{% url djangit.views.list_commits repo r %}">
+                    commits
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <hr />
+    {% include "djangit/tree.html" %}
+
+{% endblock %}

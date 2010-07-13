@@ -1,0 +1,37 @@
+<p>Tree: /{{ tree }}</p>
+
+    {% if trees %} 
+
+        Dirs:
+        <ul>
+            {% for mode, name, location, sha in trees %}
+
+                <li>
+                    <a href="{% url djangit.views.show_tree repo ref location %}">
+                        {{ name }}
+                    </a> 
+                - {{ sha }}
+                </li>
+
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+
+    {% if blobs %}
+
+        Blobs:
+        <ul>
+            {% for mode, name, location, sha in blobs %}
+
+                <li>
+                    <a href="{% url djangit.views.show_blob repo ref location %}">
+                        {{ name }}
+                    </a> 
+                - {{ sha }}
+                </li>
+
+            {% endfor %}
+        </ul>
+    
+    {% endif %}

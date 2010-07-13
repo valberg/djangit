@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <h2>{{ repo }} : {{ ref }}</h2>
+
+    <ul>
+        {% for commit in commits %}
+            <li>
+                {% include "djangit/commit_info.html" %}   
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <h3>{{ repo }}</h3>
+
+    Commit:
+
+    {% include "djangit/commit_info.html" %}
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <ul>
+        {% for r in repos %}
+            <li><a href="{% url djangit.views.show_repo r 'master' %}">{{ r }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
