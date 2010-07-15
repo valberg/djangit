@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <h3>{{ repo }} : {{ ref }}</h3>
+    <h3>{{ repo_name }} : {{ ref_name }}</h3>
 
     Latest commit:
     {% include "djangit/commit_info.html" %}
@@ -12,10 +12,10 @@
     Branches:
 
     <ul>
-        {% for r in refs %}
+        {% for ref in refs %}
             <li>
-                {{ r }} - 
-                <a href="{% url djangit.views.list_commits repo r %}">
+                {{ ref }} - 
+                <a href="{% url djangit.views.list_commits repo_name ref %}">
                     commits
                 </a>
             </li>
