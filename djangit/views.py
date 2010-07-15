@@ -74,7 +74,7 @@ def show_repo(request, repo_name, ref_name):
     # Getting entries from the tree.
     tree_entries = tree.entries()
 
-    trees, blobs = seperate_tree_entries(tree_entries, tree_path, repo)
+    trees, blobs = seperate_tree_entries(tree_entries, "", repo)
 
     # References
     refs = []
@@ -132,7 +132,7 @@ def show_tree(request, repo_name, ref_name, tree_path):
     # Check if the ref_name is 40 chars, if so it must be a sha
     if len(ref_name) == 40:
         commit = repo[ref_name]
-        tree = repo[commit.tree_path]
+        tree = repo[commit.tree]
     # else it's just a normal reference name.
     else:
         tree = repo[repo['refs/heads/' + ref_name].tree]
@@ -154,7 +154,7 @@ def show_tree(request, repo_name, ref_name, tree_path):
         'blobs'     : blobs,
     })
 
-def show_blob(request, repo_name, ref_name, blob):
+def show_blob(request, repo_name, ref_name, blob_path):
     """ Show blob 
     Creates a repo object, checks if it comes from a normal name or sha value
     ref_name, finds it's way to the right tree (which actually in the end is a
@@ -170,7 +170,7 @@ def show_blob(request, repo_name, ref_name, blob):
     else:
         tree = repo[repo['refs/heads/' + ref_name].tree]
 
-    for part in blob.split('/'):
+    for part in blob_path.split('/'):
         tree = repo[tree[part][1]]
     
     return render_to_response('djangit/show_blob.html', { 
