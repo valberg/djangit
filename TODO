@@ -2,14 +2,15 @@
 
 Following is the milestone plan for djangit
 
-## M1: Refactor
+## M1: Refactor [DONE]
 Review all variable and function names, and refactor where needed for more
 purer code.
 
-## M2: Documentation
+## M2: Documentation [DONE]
 Create documentation for every function and explain code where needed.
 
-## Notes:
-That should be it for a version 1.0 release though there should be some
-testing. But since there is no writing in the repositories there should be no
-danger.
+## M3: Templates and markdown support
+It is like butt-ugly, not that butts can't be beautiful, butt you know what I
+mean! So it's about time we get some theming done, and throw some markdown 
+parsing in as well :D
+
