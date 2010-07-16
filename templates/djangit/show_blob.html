@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load markup %}
 
 {% block content %}
 
@@ -7,7 +7,11 @@
 
     Blob:
     <pre>
-        {{ blob|linenumbers|linebreaks }}
+    {% if markdown %}
+        {{ blob|markdown }}
+    {% else %}
+        {{ blob|linenumbers|linebreaksbr }}
+    {% endif %}
     </pre>
 
 {% endblock %}

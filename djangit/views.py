@@ -172,10 +172,18 @@ def show_blob(request, repo_name, ref_name, blob_path):
 
     for part in blob_path.split('/'):
         tree = repo[tree[part][1]]
+
+    md = re.search('\w*.markdown', blob_path.split('/')[-1])
+
+    markdown = False
+
+    if md:
+        markdown = True
     
     return render_to_response('djangit/show_blob.html', { 
         'repo': repo_name,
         'blob': tree,
+        'markdown': markdown
     })
 
 def show_commit(request, repo_name, ref_name, sha):
