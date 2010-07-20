@@ -6,12 +6,6 @@
     <h3>{{ repo_name }}</h3>
 
     Blob:
-    <pre class="prettyprint linenums">
-    {% if markdown %}
-        {{ blob|markdown }}
-    {% else %}
-        {{ blob }}
-    {% endif %}
-    </pre>
+    <pre id="code" class="prettyprint linenums">{% if markdown %}{{ blob|markdown }}{% else %}{{ blob }}{% endif %}</pre>
 
 {% endblock %}
