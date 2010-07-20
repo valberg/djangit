@@ -6,11 +6,11 @@
     <h3>{{ repo_name }}</h3>
 
     Blob:
-    <pre>
+    <pre class="prettyprint linenums">
     {% if markdown %}
         {{ blob|markdown }}
     {% else %}
-        {{ blob|linenumbers|linebreaksbr }}
+        {{ blob }}
     {% endif %}
     </pre>
 
