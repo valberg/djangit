@@ -49,7 +49,8 @@ def list_repos(request):
         try:
             repo_name = re.search('(?P<dir>[^/]*)\.git$', dir)
 
-            repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+            repo = dulwich.repo.Repo(config.GIT_REPOS_DIR +
+                    repo_name.group('dir') + '.git')
             commit = repo[repo.head()]
 
             repos.append((repo_name.group('dir'), commit))
