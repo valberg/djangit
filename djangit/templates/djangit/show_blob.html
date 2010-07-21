@@ -7,7 +7,7 @@
 
     Blob:
     {% if markdown %}
-        {{ blob | markdown }}
+        {{ blob|markdown }}
     {% else %}
         <pre id="code" class="prettyprint linenums">{% if markdown %}{{ blob|markdown }}{% else %}{{ blob }}{% endif %}</pre>
     {% endif %}
