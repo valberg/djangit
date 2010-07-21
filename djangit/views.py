@@ -109,7 +109,7 @@ def show_repo(request, repo_name, ref_name):
         readme = ""
 
     return render_to_response('djangit/show_repo.html', {
-        'rep o_name': repo_name,
+        'repo_name': repo_name,
         'ref_name': ref_name,
         'commit': commit,
         'refs': refs,
