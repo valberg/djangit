@@ -3,25 +3,29 @@
 
 {% block content %}
 
-    <h3>{{ repo_name }} : {{ ref_name }}</h3>
+    <h1>
+        {{ repo_name }} : 
+        <div id="branchpicker">
+            {{ ref_name }}
+            <ul>
+                {% for ref in refs %}
+                    <li>
+                        {{ ref }} - 
+                        <a href="{% url djangit.views.list_commits repo_name ref %}">
+                            commits
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    
+    </h1>
 
-    Latest commit:
-    {% include "djangit/commit_info.html" %}
+    <div id="latest">
+        Latest commit:
+        {% include "djangit/commit_info.html" %}
+    </div>
 
-    <hr />
-    Branches:
-
-    <ul>
-        {% for ref in refs %}
-            <li>
-                {{ ref }} - 
-                <a href="{% url djangit.views.list_commits repo_name ref %}">
-                    commits
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-    <hr />
     {% include "djangit/tree.html" %}
 
 {% endblock %}
