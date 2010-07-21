@@ -1,16 +1,6 @@
 # Milestones:
 
-Following is the milestone plan for djangit
+We need to define a new roadmap for djangit.
 
-## M1: Refactor [DONE]
-Review all variable and function names, and refactor where needed for more
-purer code.
-
-## M2: Documentation [DONE]
-Create documentation for every function and explain code where needed.
-
-## M3: Templates and markdown support
-It is like butt-ugly, not that butts can't be beautiful, butt you know what I
-mean! So it's about time we get some theming done, and throw some markdown 
-parsing in as well :D
-
+This is what I see definitely as MUST-HAVES:
+- View deltas (a.k.a. diffs) for each commit
