@@ -50,7 +50,7 @@ def list_repos(request):
             repo_name = re.search('(?P<dir>[^/]*)\.git$', dir)
 
             repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
-            commit = repo[repo.ref('refs/heads/' + ref_name)]
+            commit = repo[repo.head()]
 
             repos.append((repo_name.group('dir'), commit))
         except:
