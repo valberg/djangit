@@ -46,12 +46,15 @@ def list_repos(request):
     repos = []
 
     for dir in glob.glob(os.path.join(config.GIT_REPOS_DIR, '*.git')):
-        repo_name = re.search('(?P<dir>[^/]*)\.git$', dir)
+        try:
+            repo_name = re.search('(?P<dir>[^/]*)\.git$', dir)
 
-        repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
-        commit = repo[repo.ref('refs/heads/' + ref_name)]
+            repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+            commit = repo[repo.ref('refs/heads/' + ref_name)]
 
-        repos.append((repo_name.group('dir'), commit))
+            repos.append((repo_name.group('dir'), commit))
+        except:
+            pass
 
     return render_to_response('djangit/list_repos.html', {'repos': repos})
 
