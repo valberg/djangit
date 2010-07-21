@@ -5,7 +5,12 @@
 
     <ul>
         {% for r, msg in repos %}
-            <li><a href="{% url djangit.views.show_repo r 'master' %}">{{ r }} {{ msg }}</a></li>
+            <li>
+                <a href="{% url djangit.views.show_repo r 'master' %}">
+                    <h2>{{ r }}</h2><h4>{{ msg }}</h4>
+                    <br />
+                </a>
+            </li>
         {% endfor %}
     </ul>
 
