@@ -53,7 +53,7 @@ def list_repos(request):
                     repo_name.group('dir') + '.git')
             commit = repo[repo.head()]
 
-            repos.append((repo_name.group('dir'), commit))
+            repos.append((repo_name.group('dir'), commit.message))
         except:
             pass
 
