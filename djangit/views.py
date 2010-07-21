@@ -100,13 +100,22 @@ def show_repo(request, repo_name, ref_name):
             parts = ref.split('/')
             refs.append(parts[-1])
 
+    # We want to show the readme file, if it exists
+    try:
+        if tree['README.markdown']:
+            readme = repo[tree['README.markdown'][1]]
+
+    except:
+        readme = ""
+
     return render_to_response('djangit/show_repo.html', {
-        'repo_name': repo_name,
+        'rep o_name': repo_name,
         'ref_name': ref_name,
         'commit': commit,
         'refs': refs,
         'trees': trees,
         'blobs': blobs,
+        'readme': readme,
     })
 
 

@@ -1,5 +1,6 @@
 {% extends "djangit/base.html" %}
 
+{% load markup %}
 
 {% block content %}
 
@@ -28,4 +29,9 @@
 
     {% include "djangit/tree.html" %}
 
+    <hr />
+
+    {% if readme %}
+        {{ readme|markdown }}
+    {% endif %}
 {% endblock %}
