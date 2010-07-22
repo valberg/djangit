@@ -260,12 +260,19 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
     # If so, use that file
     # To be implemented :P
 
-    htmldiffer = difflib.HtmlDiff()
-    diff_html = htmldiffer.make_table(blob1.data.split('\n'), blob2.data.split('\n'))
+    #htmldiffer = difflib.HtmlDiff()
+    #diff_html = htmldiffer.make_table(blob1.data.split('\n'), blob2.data.split('\n'))
+
+    diff = difflib.context_diff(blob1.data.split('\n'),
+            blob2.data.split('\n'))
+    
+    diff_string = ""
+    for line in diff:
+        diff_string += line + '\n'
 
     return render_to_response('djangit/show_blob_diff.html', {
         'repo_name': repo_name,
         'blob1': blob1,
         'blob2': blob2,
-        'diff_html': diff_html,
+        'diff': diff_string,
     })

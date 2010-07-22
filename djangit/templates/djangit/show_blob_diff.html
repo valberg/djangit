@@ -2,5 +2,6 @@
 
 {% block content %}
     {{ blob1.id }} vs {{ blob2.id }}
-    {{ diff_html|safe }}
+    <pre id="code" class="prettyprint linenums">{{ diff|linenumbers|linebreaks }}</pre>
+
 {% endblock %}
