@@ -9,4 +9,9 @@
 
     {% include "djangit/commit_info.html" %}
 
+    <hr />
+    {% for blob_name, diff in diffs %}
+        <h3>{{ blob_name }}</h3>
+        {{ diff|linenumbers|linebreaks }}<br /><br />
+    {% endfor %}
 {% endblock %}
