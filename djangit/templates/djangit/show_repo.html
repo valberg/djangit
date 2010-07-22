@@ -4,6 +4,11 @@
 
 {% block content %}
 
+    <div id="latest">
+        Latest commit:
+        {% include "djangit/commit_info.html" %}
+    </div>
+
     <h1>
         {{ repo_name }} : 
         <div id="branchpicker">
@@ -21,11 +26,6 @@
         </div>
     
     </h1>
-
-    <div id="latest">
-        Latest commit:
-        {% include "djangit/commit_info.html" %}
-    </div>
 
     {% include "djangit/tree.html" %}
 
