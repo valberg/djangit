@@ -6,7 +6,7 @@ urlpatterns = patterns('',
     (r'^(?P<repo_name>[^/]*)/commits/(?P<ref_name>[^/]*)/$',
         list_commits),
 
-    (r'^(?P<repo_name>[^/]*)/tree/(?P<ref_name>[^/]*)/(?P<tree_path>.*)$',
+    (r'^(?P<repo_name>[^/]*)/tree/(?P<identifier>[^/]*)/(?P<tree_path>.*)$',
         show_tree),
 
     (r'^(?P<repo_name>[^/]*)/blob/(?P<ref_name>[^/]*)/(?P<blob_path>.*)$',
