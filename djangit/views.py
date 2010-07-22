@@ -5,6 +5,7 @@ import dulwich
 import re
 import glob
 import os
+import difflib
 
 
 def seperate_tree_entries(tree_entries, tree_path, repo):
@@ -209,7 +210,7 @@ def show_blob(request, repo_name, ref_name, blob_path):
         'markdown': markdown, })
 
 
-def show_commit(request, repo_name, ref_name, sha):
+def show_commit(request, repo_name, sha):
     """ Show commit
 
     Pretty straight forward:
@@ -222,8 +223,49 @@ def show_commit(request, repo_name, ref_name, sha):
 
     commit = repo[sha]
 
+    diffs = []
+    
+    if commit.parents:
+        # Right now we only support single parents
+        commit_parent = repo[commit.parents[0]]
+
+        obj_store = repo.object_store
+        changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
+        
+        for c in changes:
+            # c[0] er en tuple med nyt navn og gammelt navn
+            # c[1] er en typle med nyt mode og gammelt mode
+            # c[2] er en tuple med ny sha og gammel sha
+
+            try:
+                diffs.append(difflib.context_diff(repo[c[2][0]], repo[c[2][1]]))
+            except:
+                pass
+
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
-        'ref_name': ref_name,
         'commit': commit,
+        'diffs': diffs,
+    })
+
+
+def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
+    ''' Show blob diff's using difflib '''
+    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+
+    blob1 = repo[blob1_sha]
+    blob2 = repo[blob2_sha]
+
+    # Check if there already exists a cache of the diff
+    # If so, use that file
+    # To be implemented :P
+
+    htmldiffer = difflib.HtmlDiff()
+    diff_html = htmldiffer.make_table(blob1.data.split('\n'), blob2.data.split('\n'))
+
+    return render_to_response('djangit/show_blob_diff.html', {
+        'repo_name': repo_name,
+        'blob1': blob1,
+        'blob2': blob2,
+        'diff_html': diff_html,
     })

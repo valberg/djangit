@@ -8,7 +8,7 @@ Trees
         <li>
             <a href="{% url djangit.views.show_tree repo_name ref_name location %}">
                 {{ name }}
-            </a>
+            </a> - {{ sha }}
         </li>
     {% endfor %}
     </ul>
@@ -23,7 +23,7 @@ Blobs:
             <li>
                 <a href="{% url djangit.views.show_blob repo_name ref_name location %}">
                     {{ name }}
-                </a>
+                </a> - {{ sha }}
             </li>
         {% endfor %}
         </ul>

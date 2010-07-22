@@ -8,7 +8,7 @@
 
     Parents: 
     {% for parent in commit.parents %}
-        <a href="{% url djangit.views.show_commit repo_name ref_name parent %}">
+        <a href="{% url djangit.views.show_commit repo_name parent %}">
             {{ parent }}
         </a>
     {% endfor %}<br />

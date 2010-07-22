@@ -12,7 +12,10 @@ urlpatterns = patterns('',
     (r'^(?P<repo_name>[^/]*)/blob/(?P<ref_name>[^/]*)/(?P<blob_path>.*)$',
         show_blob),
 
-    (r'^(?P<repo_name>[^/]*)/commit/(?P<ref_name>[^/]*)/(?P<sha>\w{40})$',
+    (r'^(?P<repo_name>[^/]*)/blob/(?P<blob1_sha>\w{40}):(?P<blob2_sha>\w{40})$',
+        show_blob_diff),
+
+    (r'^(?P<repo_name>[^/]*)/commit/(?P<sha>\w{40})$',
         show_commit),
 
     (r'^(?P<repo_name>[^/]*)/(?P<ref_name>[^/]*)$',
