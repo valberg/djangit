@@ -9,21 +9,23 @@
         {% include "djangit/commit_info.html" %}
     </div>
 
-    <div id="repo_name">
-        {{ repo_name }}
-    </div>
-    <div id="branchpicker">
-        {{ ref_name }}
-        <ul>
-            {% for ref in refs %}
-                <li>
-                    {{ ref }} - 
-                    <a href="{% url djangit.views.list_commits repo_name ref %}">
-                        commits
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
+    <div>
+        <div id="repo_name">
+            {{ repo_name }}
+        </div>
+        <div id="branchpicker">
+            {{ ref_name }}
+            <ul>
+                {% for ref in refs %}
+                    <li>
+                        {{ ref }} - 
+                        <a href="{% url djangit.views.list_commits repo_name ref %}">
+                            commits
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
     {% include "djangit/tree.html" %}
