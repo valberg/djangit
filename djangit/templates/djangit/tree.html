@@ -1,12 +1,11 @@
 <p>Tree: /{{ tree_path }}</p>
 
-
 {% if trees %} 
 Trees
     <ul>
     {% for mode, name, location, sha in trees %}
         <li>
-            <a href="{% url djangit.views.show_tree repo_name ref_name location %}">
+            <a href="{% url djangit.views.show_tree repo_name identifier location %}">
                 {{ name }}
             </a> - {{ sha }}
         </li>
@@ -21,7 +20,7 @@ Blobs:
         <ul>
         {% for mode, name, location, sha in blobs %}
             <li>
-                <a href="{% url djangit.views.show_blob repo_name ref_name location %}">
+                <a href="{% url djangit.views.show_blob repo_name identifier location %}">
                     {{ name }}
                 </a> - {{ sha }}
             </li>

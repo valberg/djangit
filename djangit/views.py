@@ -140,7 +140,7 @@ def list_commits(request, repo_name, ref_name):
     })
 
 
-def show_tree(request, repo_name, ref_name, tree_path):
+def show_tree(request, repo_name, identifier, tree_path):
     """ Show tree
 
     Creates a repo object from repo_name, checks ref_name for if it's a sha
@@ -154,15 +154,14 @@ def show_tree(request, repo_name, ref_name, tree_path):
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
     # Check if the ref_name is 40 chars, if so it must be a sha
-    if len(ref_name) == 40:
-        commit = repo[ref_name]
-        tree = repo[commit.tree]
+    if len(identifier) == 40:
+        tree = repo[identifier]
     # else it's just a normal reference name.
     else:
-        tree = repo[repo['refs/heads/' + ref_name].tree]
+        tree = repo[repo['refs/heads/' + identifier].tree]
 
     if tree_path:
-        for part in tree_path.split('/'):
+        for part in tree_path.split('/'): 
             tree = repo[tree[part][1]]
 
     tree_entries = tree.entries()
@@ -171,7 +170,7 @@ def show_tree(request, repo_name, ref_name, tree_path):
 
     return render_to_response('djangit/show_tree.html', {
         'repo_name': repo_name,
-        'ref_name': ref_name,
+        'identifier': identifier,
         'tree_path': tree_path,
         'trees': trees,
         'blobs': blobs,
@@ -224,23 +223,27 @@ def show_commit(request, repo_name, sha):
     commit = repo[sha]
 
     diffs = []
-    
+   
     if commit.parents:
         # Right now we only support single parents
         commit_parent = repo[commit.parents[0]]
-
         obj_store = repo.object_store
         changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
         
         for c in changes:
             # c[0] er en tuple med nyt navn og gammelt navn
-            # c[1] er en typle med nyt mode og gammelt mode
+            # c[1] er en tuple med nyt mode og gammelt mode
             # c[2] er en tuple med ny sha og gammel sha
 
-            try:
-                diffs.append(difflib.context_diff(repo[c[2][0]], repo[c[2][1]]))
-            except:
-                pass
+            diff = difflib.context_diff(repo[c[2][0]].data.split('\n'),
+                    repo[c[2][1]].data.split('\n'))
+            blob_name = c[0][0] + " -> " + c[0][1]
+            diff_string = ''
+            for line in diff:
+                diff_string += line + '\n'
+
+
+            diffs.append((blob_name, diff_string))
 
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,

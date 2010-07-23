@@ -1,15 +1,22 @@
 <p>
     <b>{{ commit.message }}</b><br />
-    Tree: 
-    <a href="{% url djangit.views.show_tree repo_name commit.id tree %}">
+
+    Commit: 
+    <a href="{% url djangit.views.show_commit repo_name commit.id %}">
         {{ commit.id }}
+    </a>
+    <br />
+
+    Tree: 
+    <a href="{% url djangit.views.show_tree repo_name commit.tree tree %}">
+        {{ commit.tree }}
     </a>
     <br />
 
     Parents: 
     {% for parent in commit.parents %}
         <a href="{% url djangit.views.show_commit repo_name parent %}">
-            {{ parent }}
+            {{ parent }}<br />
         </a>
     {% endfor %}<br />
 </p>
