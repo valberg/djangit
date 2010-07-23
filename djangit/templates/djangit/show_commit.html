@@ -12,6 +12,7 @@
     <hr />
     {% for blob_name, diff in diffs %}
         <h3>{{ blob_name }}</h3>
-        {{ diff|linenumbers|linebreaks }}<br /><br />
+        <pre>{{ diff}}</pre>
+        <br /><br />
     {% endfor %}
 {% endblock %}
