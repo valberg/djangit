@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+erom django.shortcuts import render_to_response
 from djangit import config
 
 import dulwich
@@ -111,7 +111,7 @@ def show_repo(request, repo_name, identifier):
 
     return render_to_response('djangit/show_repo.html', {
         'repo_name': repo_name,
-        'identifier': ref_name,
+        'identifier': identifier,
         'commit': commit,
         'refs': refs,
         'trees': trees,
@@ -135,7 +135,7 @@ def list_commits(request, repo_name, identifier):
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,
-        'identifier': ref_name,
+        'identifier': identifier,
         'commits': commits,
     })
 
