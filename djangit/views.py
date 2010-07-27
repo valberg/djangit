@@ -61,7 +61,7 @@ def list_repos(request):
     return render_to_response('djangit/list_repos.html', {'repos': repos})
 
 
-def show_repo(request, repo_name, ref_name):
+def show_repo(request, repo_name, identifier):
     """ Show info about a repo
 
     Creates a repo object using repo_name, gets the latest commit and
@@ -73,13 +73,13 @@ def show_repo(request, repo_name, ref_name):
     part is put into a list, 'refs'.
 
     All this is then sent into space with render_to_response, incl. repo_name
-    and ref_name which come from the URL.
+    and identifier which come from the URL.
     """
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
     # Getting the latest commit.
-    commit = repo[repo.ref('refs/heads/' + ref_name)]
+    commit = repo[repo.ref('refs/heads/' + identifier)]
 
     # Getting the tree of latest commit.
     tree = repo[commit.tree]
@@ -111,7 +111,7 @@ def show_repo(request, repo_name, ref_name):
 
     return render_to_response('djangit/show_repo.html', {
         'repo_name': repo_name,
-        'ref_name': ref_name,
+        'identifier': ref_name,
         'commit': commit,
         'refs': refs,
         'trees': trees,
@@ -120,22 +120,22 @@ def show_repo(request, repo_name, ref_name):
     })
 
 
-def list_commits(request, repo_name, ref_name):
+def list_commits(request, repo_name, identifier):
     """ List all commits for ref
 
     Creates a repo objects using repo_name, and gets revision history, that is
-    all commits, of the provided ref_name.
+    all commits, of the provided identifier.
     """
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
     # Since revision_history wants the whole name of the reference, incl.
-    # the refs/head/ part we need to prepend that to the ref_name.
-    commits = repo.revision_history('refs/heads/' + ref_name)
+    # the refs/head/ part we need to prepend that to the identifier.
+    commits = repo.revision_history('refs/heads/' + identifier)
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,
-        'ref_name': ref_name,
+        'identifier': ref_name,
         'commits': commits,
     })
 
@@ -143,7 +143,7 @@ def list_commits(request, repo_name, ref_name):
 def show_tree(request, repo_name, identifier, tree_path):
     """ Show tree
 
-    Creates a repo object from repo_name, checks ref_name for if it's a sha
+    Creates a repo object from repo_name, checks identifier for if it's a sha
     value or a normal name, and creates tree object accordingly (might cause
     problems for reference names with 40 characters, but those are unlikely to
     exist). Then it finds the corresponding tree entry by iterating till the
@@ -153,7 +153,7 @@ def show_tree(request, repo_name, identifier, tree_path):
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
-    # Check if the ref_name is 40 chars, if so it must be a sha
+    # Check if the identifier is 40 chars, if so it must be a sha
     if len(identifier) == 40:
         tree = repo[identifier]
     # else it's just a normal reference name.
@@ -177,21 +177,21 @@ def show_tree(request, repo_name, identifier, tree_path):
     })
 
 
-def show_blob(request, repo_name, ref_name, blob_path):
+def show_blob(request, repo_name, identifier, blob_path):
     """ Show blob
     Creates a repo object, checks if it comes from a normal name or sha value
-    ref_name, finds it's way to the right tree (which actually in the end is a
+    identifier, finds it's way to the right tree (which actually in the end is a
     blob, so it is quite misleading that we are calling the variable a tree)
     and then in the end render_to_response to show the world this blobby blob!
     """
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
-    if len(ref_name) == 40:
-        commit = repo[ref_name]
+    if len(identifier) == 40:
+        commit = repo[identifier]
         tree = repo[commit.tree]
     else:
-        tree = repo[repo['refs/heads/' + ref_name].tree]
+        tree = repo[repo['refs/heads/' + identifier].tree]
 
     for part in blob_path.split('/'):
         tree = repo[tree[part][1]]
