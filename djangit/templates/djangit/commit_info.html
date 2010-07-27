@@ -1,5 +1,9 @@
 <p>
-    <b>{{ commit.message }}</b><br />
+    <div class="commit_message">{{ commit.message }}</div>
+    <b>{{ commit.author }}</b>
+    <br />
+    {{ commit.commit_time }}
+    <br />
 
     Commit: 
     <a href="{% url djangit.views.show_commit repo_name commit.id %}">
