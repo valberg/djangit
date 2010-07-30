@@ -216,6 +216,8 @@ def show_commit(request, repo_name, sha):
     1. create a repo object
     2. find commit via sha value
     3. use render_to_response to show the world!
+
+    TODO: write the part that finds the diff's into a function of it's own!
     """
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
@@ -231,12 +233,16 @@ def show_commit(request, repo_name, sha):
         changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
         
         for c in changes:
-            # c[0] er en tuple med nyt navn og gammelt navn
-            # c[1] er en tuple med nyt mode og gammelt mode
-            # c[2] er en tuple med ny sha og gammel sha
+            # c[0] is a tuple with new and old name
+            # c[1] is a tuple with new and old mode
+            # c[2] is a tuple with new and old sha
 
-            diff = difflib.context_diff(repo[c[2][0]].data.split('\n'),
-                    repo[c[2][1]].data.split('\n'))
+            diff = difflib.unified_diff(
+                    repo[c[2][1]].data.split('\n'),
+                    repo[c[2][0]].data.split('\n'),
+                    fromfile=c[0][0],
+                    tofile=c[0][1])
+
             blob_name = c[0][0] + " -> " + c[0][1]
             diff_string = ''
             for line in diff:
@@ -253,7 +259,10 @@ def show_commit(request, repo_name, sha):
 
 
 def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
-    ''' Show blob diff's using difflib '''
+    ''' Show blob diff's using difflib 
+    TODO: this view need some love and understanding
+    
+    '''
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
     blob1 = repo[blob1_sha]
