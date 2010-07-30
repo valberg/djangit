@@ -266,8 +266,8 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
     #htmldiffer = difflib.HtmlDiff()
     #diff_html = htmldiffer.make_table(blob1.data.split('\n'), blob2.data.split('\n'))
 
-    diff = difflib.context_diff(blob1.data.split('\n'),
-            blob2.data.split('\n'))
+    diff = difflib.context_diff(blob2.data.split('\n'),
+            blob1.data.split('\n'))
     
     diff_string = ""
     for line in diff:
