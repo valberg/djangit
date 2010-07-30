@@ -1,8 +1,9 @@
-<p>
+<div>
     <div class="commit_message">{{ commit.message }}</div>
     <b>{{ commit.author }}</b>
     <br />
-    {{ commit.commit_time }}
+    {{ lastchange|date:"F j, Y H:m:s" }}
+    <br />
     <br />
 
     Commit: 
@@ -22,5 +23,5 @@
         <a href="{% url djangit.views.show_commit repo_name parent %}">
             {{ parent }}<br />
         </a>
-    {% endfor %}<br />
-</p>
+    {% endfor %}
+</div>

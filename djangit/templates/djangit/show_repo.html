@@ -4,34 +4,47 @@
 
 {% block content %}
 
-    <div id="latest">
-        <b>Latest commit:</b>
-        {% include "djangit/commit_info.html" %}
-    </div>
+    <div class="floatwrapper">
+        <div id="clonefield">
+            Clone this project : <input type="text" value="git clone ssh://git@orn.li:1337/{{ repo_name  }}.git" onclick="this.select()"/>
+        </div>
 
-    <div id="repo_name">
-        {{ repo_name }}
-    </div>
-
-    Clone this project : <input type="text" value="git clone ssh://git@orn.li:1337/{{ repo_name  }}.git" />
-
-    <div>
+        <div id="project_path">
+            <a href="/" title="Go to the overview">Overview</a> : {{ repo_name }} :
+        </div>
         <div id="branchpicker">
+            &nbsp;
             {{ identifier }}
             <ul>
                 {% for ref in refs %}
                     <li>
-                        {{ ref }} - 
-                        <a href="{% url djangit.views.list_commits repo_name ref %}">
+                        <a href="/{{ repo_name }}/{{ ref }}/" title="Switch to branch">{{ ref }}</a> - 
+                        <a href="{% url djangit.views.list_commits repo_name ref %}" title="Show branch commits">
                             commits
                         </a>
                     </li>
                 {% endfor %}
             </ul>
         </div>
+
     </div>
 
-    {% include "djangit/tree.html" %}
+    <hr />
+
+    <div class="floatwrapper">
+
+        <div id="latest">
+            {% include "djangit/commit_info.html" %}
+        </div>
+
+        <div class="floatwrapper">
+        </div>
+
+        <div id="treeview">
+            {% include "djangit/tree.html" %}
+        </div>
+
+    </div>
 
     <hr />
 

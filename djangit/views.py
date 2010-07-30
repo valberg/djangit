@@ -6,7 +6,7 @@ import re
 import glob
 import os
 import difflib
-
+from datetime import datetime
 
 def seperate_tree_entries(tree_entries, tree_path, repo):
     """ Seperates tree entries
@@ -81,6 +81,9 @@ def show_repo(request, repo_name, identifier):
     # Getting the latest commit.
     commit = repo[repo.ref('refs/heads/' + identifier)]
 
+    # Getting the last change date
+    lastchange = datetime.fromtimestamp(commit.commit_time)
+
     # Getting the tree of latest commit.
     tree = repo[commit.tree]
 
@@ -113,6 +116,7 @@ def show_repo(request, repo_name, identifier):
         'repo_name': repo_name,
         'identifier': identifier,
         'commit': commit,
+        'lastchange' : lastchange,
         'refs': refs,
         'trees': trees,
         'blobs': blobs,
