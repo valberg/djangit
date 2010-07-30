@@ -9,10 +9,13 @@
         {% include "djangit/commit_info.html" %}
     </div>
 
+    <div id="repo_name">
+        {{ repo_name }}
+    </div>
+
+    Clone this project : <input type="text" value="git clone ssh://git@orn.li:1337/{{ repo_name  }}.git" />
+
     <div>
-        <div id="repo_name">
-            {{ repo_name }}
-        </div>
         <div id="branchpicker">
             {{ identifier }}
             <ul>
