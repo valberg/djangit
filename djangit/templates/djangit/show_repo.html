@@ -18,7 +18,7 @@
             <ul>
                 {% for ref in refs %}
                     <li>
-                        <a href="/{{ repo_name }}/{{ ref }}/" title="Switch to branch">{{ ref }}</a> - 
+                        <a href="/{{ repo_name }}/{{ ref }}" title="Switch to branch {{ ref }}">{{ ref }}</a> - 
                         <a href="{% url djangit.views.list_commits repo_name ref %}" title="Show branch commits">
                             commits
                         </a>
