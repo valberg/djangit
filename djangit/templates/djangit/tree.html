@@ -5,7 +5,7 @@
             <div class="tree_element">
                 <a href="{% url djangit.views.show_tree repo_name identifier location %}">
                     <img src="/public/images/folder.gif" />
-                    {{ name }} - {{ sha }}
+                    {{ name }} - <span class="sha">{{ sha }}</span>
                 </a>
             </div>
     {% endfor %}
@@ -18,7 +18,7 @@
             <div class="tree_element">
                 <a href="{% url djangit.views.show_blob repo_name identifier location %}">
                 <img src="/public/images/file.gif" />
-                    {{ name }} - {{ sha }}
+                    {{ name }} - <span class="sha">{{ sha }}</span>
                 </a>
             </div>
         {% endfor %}
