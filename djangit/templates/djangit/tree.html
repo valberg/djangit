@@ -4,7 +4,7 @@
     {% for mode, name, location, sha in trees %}
             <div class="tree_element">
                 <a href="{% url djangit.views.show_tree repo_name identifier location %}">
-                    <img src="/public/images/folder.gif" />
+                    <img src="/public/images/folder.gif" border="0" width="20" height="20" />
                     {{ name }} [<span class="sha">{{ sha }}</span>]
                 </a>
             </div>
@@ -17,7 +17,7 @@
         {% for mode, name, location, sha in blobs %}
             <div class="tree_element">
                 <a href="{% url djangit.views.show_blob repo_name identifier location %}">
-                <img src="/public/images/file.gif" />
+                    <img src="/public/images/file.gif" border="0" width="20" height="20" />
                     {{ name }} [<span class="sha">{{ sha }}</span>]
                 </a>
             </div>
