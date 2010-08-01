@@ -3,9 +3,8 @@
 
 {% block content %}
 
-    <h3>{{ repo_name }}</h3>
+    {% include "djangit/top.html" %}
 
-    Blob:
     {% if markdown %}
         {{ blob|markdown }}
     {% else %}

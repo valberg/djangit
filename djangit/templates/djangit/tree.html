@@ -1,5 +1,3 @@
-<p>Tree: /{{ tree_path }}</p>
-
 {% if trees %} 
     {% for mode, name, location, sha in trees %}
             <div class="tree_element">
@@ -9,9 +7,8 @@
                 </a>
             </div>
     {% endfor %}
-{% endif %}
-
 <br />
+{% endif %}
 
 {% if blobs %}
         {% for mode, name, location, sha in blobs %}
