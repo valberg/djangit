@@ -3,7 +3,7 @@
 {% block content %}
 
         {% for r, msg in repos %}
-            <div class="repochooser" title="Go to the repository {{ r }}"onclick="window.location = '{% url djangit.views.show_repo r 'master' %}';">
+            <div class="repochooser" title="Go to the repository {{ r }}" onclick="window.location = '{% url djangit.views.show_repo r 'master' %}';">
                 <div class="repotitle">{{ r }}</div>
                 <div class="repomsg">{{ msg }}</div>
             </div>
