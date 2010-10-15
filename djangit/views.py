@@ -53,8 +53,9 @@ def list_repos(request):
             repo = dulwich.repo.Repo(config.GIT_REPOS_DIR +
                     repo_name.group('dir') + '.git')
             commit = repo[repo.head()]
+            lastchange = datetime.fromtimestamp(commit.commit_time)
 
-            repos.append((repo_name.group('dir'), commit.message))
+            repos.append((repo_name.group('dir'), commit.message, lastchange))
         except:
             pass
 
