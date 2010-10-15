@@ -5,7 +5,8 @@
         {% for r, msg, lastchange in repos %}
             <div class="repochooser" title="Go to the repository {{ r }}" onclick="window.location = '{% url djangit.views.show_repo r 'master' %}';">
                 <div class="repotitle">{{ r }}</div>
-                <div class="repomsg">{{ lastchange }} - {{ msg }}</div>
+                <div class="repomsg">{{ msg }} - {{ lastchange|date:"F j, Y H:m:s" }}</div>
+    
             </div>
         {% endfor %}
 
