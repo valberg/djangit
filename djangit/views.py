@@ -1,5 +1,7 @@
 from django.shortcuts import render_to_response
 from djangit import config
+from django.template import RequestContext
+
 
 import dulwich
 import re
@@ -122,7 +124,7 @@ def show_repo(request, repo_name, identifier):
         'trees': trees,
         'blobs': blobs,
         'readme': readme,
-    })
+    }, context_instance=RequestContext(request))
 
 
 def list_commits(request, repo_name, identifier):
