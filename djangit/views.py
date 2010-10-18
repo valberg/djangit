@@ -57,7 +57,7 @@ def list_repos(request):
             commit = repo[repo.head()]
             lastchange = datetime.fromtimestamp(commit.commit_time)
 
-            repos.append((repo_name.group('dir'), commit.message, lastchange))
+            repos.append((repo_name.group('dir'), commit, lastchange))
         except:
             pass
 

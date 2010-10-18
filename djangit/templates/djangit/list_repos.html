@@ -2,10 +2,11 @@
 
 {% block content %}
 
-        {% for r, msg, lastchange in repos %}
-            <div class="repochooser" title="Go to the repository {{ r }}" onclick="window.location = '{% url djangit.views.show_repo r 'master' %}';">
-                <div class="repotitle">{{ r }}</div>
-                <div class="repomsg">{{ msg }} - {{ lastchange|date:"F j, Y H:m:s" }}</div>
+        {% for repo, commit, lastchange in repos %}
+            <div class="repochooser" title="Go to the repository {{ repo }}" onclick="window.location = '{% url djangit.views.show_repo repo 'master' %}';">
+                <div class="repotime">Updated {{ lastchange|timesince}} ago</div>
+                <div class="repotitle">{{ repo }}</div>
+                <div class="repomsg">{{ commit.message }} - {{ commit.author }}</div>
     
             </div>
         {% endfor %}
