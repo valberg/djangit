@@ -1,3 +1,20 @@
+"""
+This file is part of Djangit.
+
+Djangit is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Djangit is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 from django.shortcuts import render_to_response
 from djangit import config
 from django.template import RequestContext
@@ -48,9 +65,9 @@ def list_repos(request):
 
     repos = []
 
-    for dir in glob.glob(os.path.join(config.GIT_REPOS_DIR, '*.git')):
+    for directory in glob.glob(os.path.join(config.GIT_REPOS_DIR, '*.git')):
         try:
-            repo_name = re.search('(?P<dir>[^/]*)\.git$', dir)
+            repo_name = re.search('(?P<dir>[^/]*)\.git$', directory)
 
             repo = dulwich.repo.Repo(config.GIT_REPOS_DIR +
                     repo_name.group('dir') + '.git')
@@ -59,9 +76,12 @@ def list_repos(request):
 
             repos.append((repo_name.group('dir'), commit, lastchange))
         except:
+            # TODO: Put some real exceptions in here
             pass
 
-    return render_to_response('djangit/list_repos.html', {'repos': repos}, context_instance=RequestContext(request))
+    return render_to_response('djangit/list_repos.html', 
+                              {'repos': repos}, 
+                              context_instance=RequestContext(request))
 
 
 def show_repo(request, repo_name, identifier):
@@ -113,6 +133,7 @@ def show_repo(request, repo_name, identifier):
             readme = repo[tree['README.markdown'][1]]
 
     except:
+        # Exception type?
         readme = ""
 
     return render_to_response('djangit/show_repo.html', {
@@ -203,11 +224,9 @@ def show_blob(request, repo_name, identifier, blob_path):
     for part in blob_path.split('/'):
         tree = repo[tree[part][1]]
 
-    md = re.search('\w*.markdown', blob_path.split('/')[-1])
-
     markdown = False
 
-    if md:
+    if re.search('\w*.markdown', blob_path.split('/')[-1]):
         markdown = True
 
     return render_to_response('djangit/show_blob.html', {
@@ -233,63 +252,13 @@ def show_commit(request, repo_name, sha):
 
     commit = repo[sha]
 
-    diffs = []
-   
     if commit.parents:
         # Right now we only support single parents
         commit_parent = repo[commit.parents[0]]
         obj_store = repo.object_store
         changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
         
-        for c in changes:
-            # c[0] is a tuple with new and old name
-            # c[1] is a tuple with new and old mode
-            # c[2] is a tuple with new and old sha
-
-
-            # If there is a SHA for the new file, ie. the file hasn't been
-            # deleted, then just go on and get the contents, otherwise set it
-            # to an empty string for comparison
-            new_sha = c[2][0]
-            if new_sha:
-                new_data = repo[new_sha].data.split('\n')
-            else:
-                new_data = ""
-
-            # If there is a SHA for the old file, ie. the file hasn't just been
-            # created, then just go on and get the contents, otherwise set it
-            # to an empty string for comparison
-            old_sha = c[2][1]
-            if old_sha:
-                old_data = repo[old_sha].data.split('\n')
-            else:
-                old_data = ""
-
-            diff = difflib.unified_diff(
-                    old_data,
-                    new_data,
-                    fromfile=c[0][0],
-                    tofile=c[0][1])
-
-            # If the file has just been altered, and not deleted or created,
-            # set the blob name to a string with both new and old name.
-            # Else if it's a new file, that is there is no parent name, then
-            # set the blob name to "New file: <filename>"
-            # Else if it's a deleted file, that is there is no child, then set
-            # the blob name to "Deleted file: <filename>"
-            if c[0][0] and c[0][1]:
-                blob_name = c[0][0] + " -> " + c[0][1]
-            elif not c[0][1]:
-                blob_name = "New file: " + c[0][0]
-            elif not c[0][0]:
-                blob_name = "Deleted file: " + c[0][1]
-
-            diff_string = ''
-            for line in diff:
-                diff_string += line + '\n'
-
-
-            diffs.append((blob_name, diff_string))
+        diffs = make_diffs(changes, repo)
 
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
@@ -297,6 +266,61 @@ def show_commit(request, repo_name, sha):
         'diffs': diffs,
     }, context_instance=RequestContext(request))
 
+def make_diffs(changes, repo):
+    """
+    Create diffs for two different commits
+    """
+    diffs = []
+    for change in changes:
+        # change[0] is a tuple with new and old name
+        # change[1] is a tuple with new and old mode
+        # change[2] is a tuple with new and old sha
+
+
+        # If there is a SHA for the new file, ie. the file hasn't been
+        # deleted, then just go on and get the contents, otherwise set it
+        # to an empty string for comparison
+        new_sha = change[2][0]
+        if new_sha:
+            new_data = repo[new_sha].data.split('\n')
+        else:
+            new_data = ""
+
+        # If there is a SHA for the old file, ie. the file hasn't just been
+        # created, then just go on and get the contents, otherwise set it
+        # to an empty string for comparison
+        old_sha = change[2][1]
+        if old_sha:
+            old_data = repo[old_sha].data.split('\n')
+        else:
+            old_data = ""
+
+        diff = difflib.unified_diff(
+                old_data,
+                new_data,
+                fromfile=change[0][0],
+                tofile=change[0][1])
+
+        # If the file has just been altered, and not deleted or created,
+        # set the blob name to a string with both new and old name.
+        # Else if it's a new file, that is there is no parent name, then
+        # set the blob name to "New file: <filename>"
+        # Else if it's a deleted file, that is there is no child, then set
+        # the blob name to "Deleted file: <filename>"
+        if change[0][0] and change[0][1]:
+            blob_name = change[0][0] + " -> " + change[0][1]
+        elif not change[0][1]:
+            blob_name = "New file: " + change[0][0]
+        elif not change[0][0]:
+            blob_name = "Deleted file: " + change[0][1]
+
+        diff_string = ''
+        for line in diff:
+            diff_string += line + '\n'
+
+        diffs.append((blob_name, diff_string))
+
+    return diffs
 
 def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
     ''' Show blob diff's using difflib 
@@ -313,7 +337,8 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
     # To be implemented :P
 
     #htmldiffer = difflib.HtmlDiff()
-    #diff_html = htmldiffer.make_table(blob1.data.split('\n'), blob2.data.split('\n'))
+    #diff_html = htmldiffer.make_table(blob1.data.split('\n'), 
+    #                                  blob2.data.split('\n'))
 
     diff = difflib.context_diff(blob2.data.split('\n'),
             blob1.data.split('\n'))
