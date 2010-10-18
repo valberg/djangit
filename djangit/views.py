@@ -245,12 +245,18 @@ def show_commit(request, repo_name, sha):
             # c[1] is a tuple with new and old mode
             # c[2] is a tuple with new and old sha
 
-            if c[2][1] == None:
-                c[2][1] = ""
+            sha0 = c[2][0]
+            sha1 = c[2][1]
+
+            if sha0 == None:
+                sha0 = ""
+
+            if sha1 == None:
+                sha1 = ""
 
             diff = difflib.unified_diff(
-                    repo[c[2][1]].data.split('\n'),
-                    repo[c[2][0]].data.split('\n'),
+                    repo[sha1].data.split('\n'),
+                    repo[sha0].data.split('\n'),
                     fromfile=c[0][0],
                     tofile=c[0][1])
 
