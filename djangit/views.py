@@ -211,9 +211,10 @@ def show_blob(request, repo_name, identifier, blob_path):
         markdown = True
 
     return render_to_response('djangit/show_blob.html', {
-        'repo': repo_name,
+        'repo_name': repo_name,
         'blob': tree,
         'markdown': markdown,
+        'tree_path': blob_path
     }, context_instance=RequestContext(request))
 
 
@@ -245,22 +246,44 @@ def show_commit(request, repo_name, sha):
             # c[1] is a tuple with new and old mode
             # c[2] is a tuple with new and old sha
 
-            sha0 = c[2][0]
-            sha1 = c[2][1]
 
-            if sha0 == None:
-                sha0 = ""
+            # If there is a SHA for the new file, ie. the file hasn't been
+            # deleted, then just go on and get the contents, otherwise set it
+            # to an empty string for comparison
+            new_sha = c[2][0]
+            if new_sha:
+                new_data = repo[new_sha].data.split('\n')
+            else:
+                new_data = ""
 
-            if sha1 == None:
-                sha1 = ""
+            # If there is a SHA for the old file, ie. the file hasn't just been
+            # created, then just go on and get the contents, otherwise set it
+            # to an empty string for comparison
+            old_sha = c[2][1]
+            if old_sha:
+                old_data = repo[old_sha].data.split('\n')
+            else:
+                old_data = ""
 
             diff = difflib.unified_diff(
-                    repo[sha1].data.split('\n'),
-                    repo[sha0].data.split('\n'),
+                    old_data,
+                    new_data,
                     fromfile=c[0][0],
                     tofile=c[0][1])
 
-            blob_name = c[0][0] + " -> " + c[0][1]
+            # If the file has just been altered, and not deleted or created,
+            # set the blob name to a string with both new and old name.
+            # Else if it's a new file, that is there is no parent name, then
+            # set the blob name to "New file: <filename>"
+            # Else if it's a deleted file, that is there is no child, then set
+            # the blob name to "Deleted file: <filename>"
+            if c[0][0] and c[0][1]:
+                blob_name = c[0][0] + " -> " + c[0][1]
+            elif not c[0][1]:
+                blob_name = "New file: " + c[0][0]
+            elif not c[0][0]:
+                blob_name = "Deleted file: " + c[0][1]
+
             diff_string = ''
             for line in diff:
                 diff_string += line + '\n'
