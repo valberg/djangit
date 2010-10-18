@@ -211,9 +211,10 @@ def show_blob(request, repo_name, identifier, blob_path):
         markdown = True
 
     return render_to_response('djangit/show_blob.html', {
-        'repo': repo_name,
+        'repo_name': repo_name,
         'blob': tree,
         'markdown': markdown,
+        'tree_path': blob_path
     }, context_instance=RequestContext(request))
 
 
