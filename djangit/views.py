@@ -1,5 +1,7 @@
 from django.shortcuts import render_to_response
 from djangit import config
+from django.template import RequestContext
+
 
 import dulwich
 import re
@@ -59,7 +61,7 @@ def list_repos(request):
         except:
             pass
 
-    return render_to_response('djangit/list_repos.html', {'repos': repos})
+    return render_to_response('djangit/list_repos.html', {'repos': repos}, context_instance=RequestContext(request))
 
 
 def show_repo(request, repo_name, identifier):
@@ -122,7 +124,7 @@ def show_repo(request, repo_name, identifier):
         'trees': trees,
         'blobs': blobs,
         'readme': readme,
-    })
+    }, context_instance=RequestContext(request))
 
 
 def list_commits(request, repo_name, identifier):
@@ -142,7 +144,7 @@ def list_commits(request, repo_name, identifier):
         'repo_name': repo_name,
         'identifier': identifier,
         'commits': commits,
-    })
+    }, context_instance=RequestContext(request))
 
 
 def show_tree(request, repo_name, identifier, tree_path):
@@ -179,7 +181,7 @@ def show_tree(request, repo_name, identifier, tree_path):
         'tree_path': tree_path,
         'trees': trees,
         'blobs': blobs,
-    })
+    }, context_instance=RequestContext(request))
 
 
 def show_blob(request, repo_name, identifier, blob_path):
@@ -211,7 +213,8 @@ def show_blob(request, repo_name, identifier, blob_path):
     return render_to_response('djangit/show_blob.html', {
         'repo': repo_name,
         'blob': tree,
-        'markdown': markdown, })
+        'markdown': markdown,
+    }, context_instance=RequestContext(request))
 
 
 def show_commit(request, repo_name, sha):
@@ -263,7 +266,7 @@ def show_commit(request, repo_name, sha):
         'repo_name': repo_name,
         'commit': commit,
         'diffs': diffs,
-    })
+    }, context_instance=RequestContext(request))
 
 
 def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
@@ -295,4 +298,4 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
         'blob1': blob1,
         'blob2': blob2,
         'diff': diff_string,
-    })
+    }, context_instance=RequestContext(request))
