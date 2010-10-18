@@ -250,7 +250,6 @@ def show_commit(request, repo_name, sha):
             # deleted, then just go on and get the contents, otherwise set it
             # to an empty string for comparison
             new_sha = c[2][0]
-            new_data = repo[new_sha].data.split('\n') 
             if new_sha:
                 new_data = repo[new_sha].data.split('\n')
             else:
