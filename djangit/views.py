@@ -260,7 +260,11 @@ def show_commit(request, repo_name, sha):
                     fromfile=c[0][0],
                     tofile=c[0][1])
 
-            blob_name = c[0][0] + " -> " + c[0][1]
+            if c[0][1]:
+                blob_name = c[0][0] + " -> " + c[0][1]
+            else:
+                blob_name = "New file: " + c[0][0]
+
             diff_string = ''
             for line in diff:
                 diff_string += line + '\n'
