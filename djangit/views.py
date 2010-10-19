@@ -211,13 +211,22 @@ def show_blob(request, repo_name, identifier, blob_path):
     identifier, finds it's way to the right tree (which actually in the end is a
     blob, so it is quite misleading that we are calling the variable a tree)
     and then in the end render_to_response to show the world this blobby blob!
+
+    Another quite confusing thing is that when checking out a tree from a SHA,
+    the identifier is of course the tree, and therefore commit is a tree.
     """
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
 
     if len(identifier) == 40:
         commit = repo[identifier]
-        tree = repo[commit.tree]
+
+        # Quite a hack, there must be a more elegant way of doing this
+        if commit.__class__ == dulwich.objects.Tree:
+            tree = repo[commit.id]
+        else:
+            tree = repo[commit.tree]
+
     else:
         tree = repo[repo['refs/heads/' + identifier].tree]
 
