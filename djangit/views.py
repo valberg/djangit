@@ -279,8 +279,7 @@ def show_commit(request, repo_name, sha):
         diffs = []
         for entry in obj_store.iter_tree_contents(commit.tree):
             blob = repo[entry[2]]
-            diffs.append(blob._get_data())
-
+            diffs.append((entry[0], blob._get_data()))
 
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
