@@ -264,16 +264,22 @@ def show_commit(request, repo_name, sha):
     """
 
     repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+    
+    obj_store = repo.object_store
 
     commit = repo[sha]
 
     if commit.parents:
         # Right now we only support single parents
         commit_parent = repo[commit.parents[0]]
-        obj_store = repo.object_store
         changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
         
         diffs = make_diffs(changes, repo)
+    else:
+        diffs = []
+        for entry in obj_store.iter_tree_contents(commit.tree):
+            blob = repo[entry[2]]
+            diffs.append((entry[0], blob._get_data()))
 
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
