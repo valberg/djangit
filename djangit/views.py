@@ -233,10 +233,10 @@ def show_blob(request, repo_name, identifier, blob_path):
     for part in blob_path.split('/'):
         tree = repo[tree[part][1]]
 
-    blob = tree
+    blob = str(tree).split('\n')
 
     # Get the linecount - make it start at 1
-    linecount = range(1, len(str(blob).split('\n')))
+    linecount = range(1, len(blob))
 
     markdown = False
 
