@@ -8,7 +8,7 @@
     {% if markdown %}
         {{ blob|markdown }}
     {% else %}
-        <pre id="linecount">{% for line in linecount %}<a href="#l-{{line}}" name="l-{{line}}">{{ line }}</a>
+        <pre id="linecount">{% for line in linecount %}<a href="#{{line}}" name="{{line}}">{{ line }}</a>
 {% endfor %}</pre>
         <pre id="code" class="prettyprint linenums">{{ blob }}</pre>
     {% endif %}
