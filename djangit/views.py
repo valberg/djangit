@@ -233,6 +233,11 @@ def show_blob(request, repo_name, identifier, blob_path):
     for part in blob_path.split('/'):
         tree = repo[tree[part][1]]
 
+    blob = tree
+
+    # Get the linecount - make it start at 1
+    linecount = range(1, len(str(blob).split('\n')))
+
     markdown = False
 
     if re.search('\w*.markdown', blob_path.split('/')[-1]):
@@ -240,7 +245,8 @@ def show_blob(request, repo_name, identifier, blob_path):
 
     return render_to_response('djangit/show_blob.html', {
         'repo_name': repo_name,
-        'blob': tree,
+        'blob': blob,
+        'linecount' : linecount,
         'markdown': markdown,
         'tree_path': blob_path
     }, context_instance=RequestContext(request))
