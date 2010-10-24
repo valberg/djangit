@@ -8,6 +8,7 @@
     {% if markdown %}
         {{ blob|markdown }}
     {% else %}
+    <div id="codeviewer">
 
         <table class="codetable" id="linecount">
             {% for line in blob %}
@@ -19,6 +20,8 @@
 
         <pre class="prettyprint"><table class="codetable">{% for line in blob %}<tr><td id="c_{{forloop.counter}}">{{line}}</td>
 </tr>{% endfor %}</table></pre>
+
+    </div>
 
     {% endif %}
 
