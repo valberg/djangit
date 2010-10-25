@@ -7,20 +7,20 @@
 
     <div id="git-log">
 
-        {% for commit in commits %}
-            <div class="commitlistdate" name="{{commit.commitdate|date:"dmY"}}">
-                <strong>{{commit.commitdate|date:"l F d Y"}}</strong>
+        {% for comobj in commits %}
+            <div class="commitlistdate" name="{{comobj.commitdate|date:"dmY"}}">
+                <strong>{{comobj.commitdate|date:"l F d Y"}}</strong>
             </div>
             <div>
                 <div>
-                    <strong class="commit-time">{{ commit.commitdate|date:"H:i" }}</strong>
-                    <span class="commit-author" title="{{commit.author_email}}">
-                        <img src="{{commit.gravatar}}" width="16" height="16" />
-                        {{commit.author_name}}
+                    <strong class="commit-time">{{ comobj.commitdate|date:"H:i" }}</strong>
+                    <span class="commit-author" title="{{comobj.author.email}}">
+                        <img src="{{comobj.author.gravatar}}" width="16" height="16" />
+                        {{comobj.author.name}}
                     </span>
-                    <strong>committed</strong> <a href="{% url djangit.views.show_commit repo_name commit.id %}" class="sha">{{ commit.id }}</a>
+                    <strong>committed</strong> <a href="{% url djangit.views.show_commit repo_name comobj.commit.id %}" class="sha">{{ comobj.commit.id }}</a>
                 </div>
-                <pre class="commit-message">{{commit.message}}</pre>
+                <pre class="commit-message">{{comobj.commit.message}}</pre>
             </div>
         {% endfor %}
 

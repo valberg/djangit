@@ -162,17 +162,19 @@ def list_commits(request, repo_name, identifier):
     # the refs/head/ part we need to prepend that to the identifier.
     commits = repo.revision_history('refs/heads/' + identifier)
 
+    commitholder = []
+
     for commit in commits:
-        commit.commitdate = datetime.fromtimestamp(commit.commit_time)
-        ms = commit.author.index('<')
-        commit.author_name = commit.author[:ms].strip(' ')
-        commit.author_email = commit.author[ms+1:-1]
-        commit.gravatar = getGravatar(commit.author_email, 16)
+        comobj = {}
+        comobj['commitdate'] = datetime.fromtimestamp(commit.commit_time)
+        comobj['author'] = getAuthor(commit)
+        comobj['commit'] = commit
+        commitholder.append(comobj)
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,
         'identifier': identifier,
-        'commits': commits,
+        'commits': commitholder,
     }, context_instance=RequestContext(request))
 
 
