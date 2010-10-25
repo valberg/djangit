@@ -102,10 +102,7 @@ def show_repo(request, repo_name, identifier):
 
     # Getting the latest commit.
     commit = repo[repo.ref('refs/heads/' + identifier)]
-    ms = commit.author.index('<')
-    commit.author_name = commit.author[:ms].strip(' ')
-    commit.author_email = commit.author[ms+1:-1]
-    commit.gravatar = getGravatar(commit.author_email, 40)
+    author = getAuthor(commit)
 
     # Getting the last change date
     lastchange = datetime.fromtimestamp(commit.commit_time)
@@ -143,6 +140,7 @@ def show_repo(request, repo_name, identifier):
         'repo_name': repo_name,
         'identifier': identifier,
         'commit': commit,
+        'author': author,
         'lastchange' : lastchange,
         'refs': refs,
         'trees': trees,
@@ -291,14 +289,12 @@ def show_commit(request, repo_name, sha):
             blob = repo[entry[2]]
             diffs.append((entry[0], blob._get_data()))
 
-    ms = commit.author.index('<')
-    commit.author_name = commit.author[:ms].strip(' ')
-    commit.author_email = commit.author[ms+1:-1]
-    commit.gravatar = getGravatar(commit.author_email, 40)
+    author = getAuthor(commit)
 
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
         'commit': commit,
+        'author':author,
         'diffs': diffs,
     }, context_instance=RequestContext(request))
 
@@ -389,6 +385,20 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
         'blob2': blob2,
         'diff': diff_string,
     }, context_instance=RequestContext(request))
+
+def getAuthor(commit):
+    ms = commit.author.index('<')
+    name = commit.author[:ms].strip(' ')
+    email = commit.author[ms+1:-1]
+    gravatar = getGravatar(email, 40)
+
+    author = {
+        'name' : name,
+        'email' : email,
+        'gravatar' : gravatar,
+    }
+
+    return author
 
 def getGravatar(email, size):
     # import code for encoding urls and generating md5 hashes

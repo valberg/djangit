@@ -1,7 +1,7 @@
 <div class="commit-info">
     <div class="commit_message">{{ commit.message }}</div>
-    <img src="{{commit.gravatar}}" width="40" height="40" />
-    <b>{{ commit.author_name }}</b>
+    <img src="{{author.gravatar}}" width="40" height="40" />
+    <b>{{ author.name }}</b>
     <br />
     <span class="dateinfo">
         {{ lastchange|date:"l F d Y" }}<br />
