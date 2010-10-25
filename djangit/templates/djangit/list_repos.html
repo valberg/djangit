@@ -2,11 +2,11 @@
 
 {% block content %}
 
-        {% for repo, commit, lastchange in repos %}
+        {% for repo, commit, lastchange, author in repos %}
             <div class="repochooser" title="Go to the repository {{ repo }}" onclick="window.location = '{% url djangit.views.show_repo repo 'master' %}';">
                 <div class="repotime" title="{{lastchange|date:"F j, Y H:m:s" }}">Last updated<br />{{ lastchange|timesince}} ago</div>
                 <div class="repotitle">{{ repo }}</div>
-                <div class="repomsg">{{ commit.message }} - {{ commit.author }}</div>
+                <div class="repomsg">{{ commit.message }} - {{ author.name }}</div>
     
             </div>
         {% endfor %}

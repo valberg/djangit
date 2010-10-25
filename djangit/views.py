@@ -71,9 +71,10 @@ def list_repos(request):
             repo = dulwich.repo.Repo(config.GIT_REPOS_DIR +
                     repo_name.group('dir') + '.git')
             commit = repo[repo.head()]
+            author = getAuthor(commit)
             lastchange = datetime.fromtimestamp(commit.commit_time)
 
-            repos.append((repo_name.group('dir'), commit, lastchange))
+            repos.append((repo_name.group('dir'), commit, lastchange, author))
         except:
             # TODO: Put some real exceptions in here
             pass
