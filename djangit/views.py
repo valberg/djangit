@@ -19,7 +19,6 @@ from django.shortcuts import render_to_response
 from djangit import config
 from django.template import RequestContext
 
-
 import dulwich
 import re
 import glob
@@ -160,6 +159,9 @@ def list_commits(request, repo_name, identifier):
     # Since revision_history wants the whole name of the reference, incl.
     # the refs/head/ part we need to prepend that to the identifier.
     commits = repo.revision_history('refs/heads/' + identifier)
+
+    for commit in commits:
+        commit.commitdate = datetime.fromtimestamp(commit.commit_time)
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,

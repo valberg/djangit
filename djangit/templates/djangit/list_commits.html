@@ -4,12 +4,21 @@
 
     <h2>{{ repo_name }} : {{ identifier }}</h2>
 
-    <ul>
+    <div id="git-log">
+
         {% for commit in commits %}
-            <li>
-                {% include "djangit/commit_info.html" %}   
-            </li>
+            <div class="commitlistdate" name="{{commit.commitdate|date:"dmY"}}">
+                <strong>{{commit.commitdate|date:"l F d Y"}}</strong>
+            </div>
+            <div>
+                <div>
+                    <strong class="commit-time">{{ commit.commitdate|date:"H:i" }}</strong>
+                    <span class="commit-author">{{commit.author}}</span><strong>committed</strong> <a href="{% url djangit.views.show_commit repo_name commit.id %}" class="sha">{{ commit.id }}</a>
+                </div>
+                <pre class="commit-message">{{commit.message}}</pre>
+            </div>
         {% endfor %}
-    </ul>
+
+    </div>
 
 {% endblock %}
