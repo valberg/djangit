@@ -2,7 +2,8 @@
 
 {% block content %}
 
-    <h2>{{ repo_name }} : {{ identifier }}</h2>
+    <h2>{{ repo_name }} : {{ identifier }} - Log</h2>
+    <hr />
 
     <div id="git-log">
 
@@ -13,7 +14,11 @@
             <div>
                 <div>
                     <strong class="commit-time">{{ commit.commitdate|date:"H:i" }}</strong>
-                    <span class="commit-author">{{commit.author}}</span><strong>committed</strong> <a href="{% url djangit.views.show_commit repo_name commit.id %}" class="sha">{{ commit.id }}</a>
+                    <span class="commit-author" title="{{commit.author_email}}">
+                        <img src="{{commit.gravatar}}" width="16" height="16" />
+                        {{commit.author_name}}
+                    </span>
+                    <strong>committed</strong> <a href="{% url djangit.views.show_commit repo_name commit.id %}" class="sha">{{ commit.id }}</a>
                 </div>
                 <pre class="commit-message">{{commit.message}}</pre>
             </div>

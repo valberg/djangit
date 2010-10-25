@@ -3,12 +3,9 @@
 
 {% block content %}
 
-    <h3>{{ repo_name }}</h3>
-
-    Commit:
-
+    <h2>{{ repo_name }} - Commit</h2>
+    <hr />
     {% include "djangit/commit_info.html" %}
-
     <hr />
     {% for blob_name, diff in diffs %}
         <h3>{{ blob_name }}</h3>

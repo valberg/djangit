@@ -102,6 +102,10 @@ def show_repo(request, repo_name, identifier):
 
     # Getting the latest commit.
     commit = repo[repo.ref('refs/heads/' + identifier)]
+    ms = commit.author.index('<')
+    commit.author_name = commit.author[:ms].strip(' ')
+    commit.author_email = commit.author[ms+1:-1]
+    commit.gravatar = getGravatar(commit.author_email, 40)
 
     # Getting the last change date
     lastchange = datetime.fromtimestamp(commit.commit_time)
@@ -162,6 +166,10 @@ def list_commits(request, repo_name, identifier):
 
     for commit in commits:
         commit.commitdate = datetime.fromtimestamp(commit.commit_time)
+        ms = commit.author.index('<')
+        commit.author_name = commit.author[:ms].strip(' ')
+        commit.author_email = commit.author[ms+1:-1]
+        commit.gravatar = getGravatar(commit.author_email, 16)
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,
@@ -283,6 +291,11 @@ def show_commit(request, repo_name, sha):
             blob = repo[entry[2]]
             diffs.append((entry[0], blob._get_data()))
 
+    ms = commit.author.index('<')
+    commit.author_name = commit.author[:ms].strip(' ')
+    commit.author_email = commit.author[ms+1:-1]
+    commit.gravatar = getGravatar(commit.author_email, 40)
+
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
         'commit': commit,
@@ -376,3 +389,16 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
         'blob2': blob2,
         'diff': diff_string,
     }, context_instance=RequestContext(request))
+
+def getGravatar(email, size):
+    # import code for encoding urls and generating md5 hashes
+    import urllib, hashlib
+
+    # Set your variables here
+    default = "monsterid"
+
+    # construct the url
+    gravatar_url = "https://secure.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
+    gravatar_url += urllib.urlencode({'d':default, 's':str(size)})    
+
+    return gravatar_url
