@@ -38,9 +38,9 @@ def seperate_tree_entries(tree_entries, tree_path, repo):
 
     for mode, name, sha in tree_entries:
         if tree_path:
-            url = tree_path + '/' + name
+            url = tree_path + '/' + name.decode('utf-8')
         else:
-            url = name
+            url = name.decode('utf-8')
 
         entry = repo.get_object(sha)
 
@@ -242,6 +242,7 @@ def show_blob(request, repo_name, identifier, blob_path):
         tree = repo[repo['refs/heads/' + identifier].tree]
 
     for part in blob_path.split('/'):
+        part = part.encode('utf-8')
         tree = repo[tree[part][1]]
 
     blob = str(tree).split('\n')
