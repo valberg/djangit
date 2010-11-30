@@ -80,7 +80,7 @@ def list_repos(request):
             pass
 
     # Sort the repos alphabetically
-    repos = sorted(repo, key=lambda repo : repo[0])
+    repos = sorted(repos, key=lambda repo : repo[0])
 
     return render_to_response('djangit/list_repos.html', 
                               {'repos': repos}, 
