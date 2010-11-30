@@ -79,6 +79,9 @@ def list_repos(request):
             # TODO: Put some real exceptions in here
             pass
 
+    # Sort the repos alphabetically
+    repos = sorted(repo, key=lambda repo : repo[0])
+
     return render_to_response('djangit/list_repos.html', 
                               {'repos': repos}, 
                               context_instance=RequestContext(request))
