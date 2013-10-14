@@ -1,5 +1,56 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet"
+        href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 
+    <link rel="stylesheet"
+        href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css">
+
+    <style>
+        .navbar-brand {
+            padding: 15px 15px 0 15px;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-default" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">
+    <img src="{{ STATIC_URL }}img/djangit-logo.png" alt="Djangit" />
+    </a>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse navbar-ex1-collapse">
+    <ul class="nav navbar-nav">
+      <li><a href="/">Repo list</a></li>
+    </ul>
+    {% if repo_name %}
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="{% url 'djangit:list_commits' repo_name 'master' %}">Commits</a></li>
+    </ul>
+    {% endif %}
+  </div><!-- /.navbar-collapse -->
+</nav>
+
+    <div class="container">
 {% block content %}
 
 {% endblock %}
+    </div>
+
+<script
+    src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script
+    src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

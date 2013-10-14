@@ -1,25 +1,27 @@
-from django.conf.urls.defaults import *
-from djangit.views import *
+from django.conf.urls import patterns, url
+from . import views
 
-urlpatterns = patterns('',
 
-    (r'^(?P<repo_name>[^/]*)/commits/(?P<identifier>[^/]*)/$',
-        list_commits),
+urlpatterns = patterns(
+    '',
 
-    (r'^(?P<repo_name>[^/]*)/tree/(?P<identifier>[^/]*)/(?P<tree_path>.*)$',
-        show_tree),
+    url(r'^(?P<repo_name>[^/]+)/commits/(?P<identifier>[^/]*)/$',
+        views.list_commits, name='list_commits'),
 
-    (r'^(?P<repo_name>[^/]*)/blob/(?P<identifier>[^/]*)/(?P<blob_path>.*)$',
-        show_blob),
+    url(r'^(?P<repo_name>[^/]+)/tree/(?P<identifier>[^/]*)/(?P<tree_path>.*)$',
+        views.show_tree, name='show_tree'),
 
-    (r'^(?P<repo_name>[^/]*)/blob/(?P<blob1_sha>\w{40}):(?P<blob2_sha>\w{40})$',
-        show_blob_diff),
+    url(r'^(?P<repo_name>[^/]+)/blob/(?P<identifier>[^/]*)/(?P<blob_path>.*)$',
+        views.show_blob, name='show_blob'),
 
-    (r'^(?P<repo_name>[^/]*)/commit/(?P<sha>\w{40})$',
-        show_commit),
+    url(r'^(?P<repo_name>[^/]+)/blob/(?P<blob1_sha>\w{40}):(?P<blob2_sha>\w{40})$',
+        views.show_blob_diff, name='show_blob_diff'),
 
-    (r'^(?P<repo_name>[^/]*)/(?P<identifier>[^/]*)$',
-        show_repo),
+    url(r'^(?P<repo_name>[^/]+)/commit/(?P<sha>\w{40})$',
+        views.show_commit, name='show_commit'),
 
-    (r'^$', list_repos),
+    url(r'^(?P<repo_name>[^/]+)/(?P<identifier>[^/]+)$',
+        views.show_repo, name='show_repo'),
+
+    url(r'^$', views.list_repos, name='list_repos'),
 )

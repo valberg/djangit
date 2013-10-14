@@ -1,22 +1,26 @@
-{% if trees %} 
+<table class="table table-striped">
+  <tbody>
+
+{% if trees %}
     {% for mode, name, location, sha in trees %}
-            <div class="tree_element">
-                <a href="{% url djangit.views.show_tree repo_name identifier location %}">
-                    <img src="/public/images/folder.gif" border="0" width="20" height="20" />
-                    {{ name }} [<span class="sha">{{ sha }}</span>]
-                </a>
-            </div>
+            <tr>
+                <td>
+                    <a href="{% url 'djangit:show_tree' repo_name identifier location %}">
+                        <i class="icon-folder-close"></i>
+                        {{ name }}
+                    </a>
     {% endfor %}
 <br />
 {% endif %}
 
 {% if blobs %}
         {% for mode, name, location, sha in blobs %}
-            <div class="tree_element">
-                <a href="{% url djangit.views.show_blob repo_name identifier location %}">
-                    <img src="/public/images/file.gif" border="0" width="20" height="20" />
-                    {{ name }} [<span class="sha">{{ sha }}</span>]
-                </a>
-            </div>
+                <tr>
+                    <td>
+                        <a href="{% url 'djangit:show_blob' repo_name identifier location %}">
+                            <i class="icon-file"></i>
+                            {{ name }}
+                        </a>
         {% endfor %}
 {% endif %}
+</table>

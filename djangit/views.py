@@ -15,18 +15,21 @@ You should have received a copy of the GNU General Public License
 along with Djangit. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.shortcuts import render_to_response
-from djangit import config
-from django.template import RequestContext
-
-import dulwich
 import re
 import glob
 import os
 import difflib
 from datetime import datetime
 
-def seperate_tree_entries(tree_entries, tree_path, repo):
+from dulwich.repo import Repo, Tree
+from dulwich.walk import Walker
+
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.conf import settings
+
+
+def seperate_tree_entries(tree, tree_path, repo):
     """ Seperates tree entries
 
     Iterates through the tree entries to place trees in one list and blobs in
@@ -36,7 +39,7 @@ def seperate_tree_entries(tree_entries, tree_path, repo):
     trees = []
     blobs = []
 
-    for mode, name, sha in tree_entries:
+    for name, mode, sha in tree.iteritems():
         if tree_path:
             url = tree_path + '/' + name.decode('utf-8')
         else:
@@ -64,26 +67,30 @@ def list_repos(request):
 
     repos = []
 
-    for directory in glob.glob(os.path.join(config.GIT_REPOS_DIR, '*.git')):
-        try:
+    for directory in glob.glob(os.path.join(settings.GIT_REPOS_DIR, '*.git')):
             repo_name = re.search('(?P<dir>[^/]*)\.git$', directory)
 
-            repo = dulwich.repo.Repo(config.GIT_REPOS_DIR +
-                    repo_name.group('dir') + '.git')
-            commit = repo[repo.head()]
-            author = getAuthor(commit)
-            lastchange = datetime.fromtimestamp(commit.commit_time)
+            repo = Repo('{}{}.git'.format(
+                settings.GIT_REPOS_DIR,
+                repo_name.group('dir')
+            ))
+
+            commit = None
+            author = None
+            lastchange = None
+
+            if len(repo.get_refs()) > 0:
+                commit = repo[repo.head()]
+                author = get_author(commit)
+                lastchange = datetime.fromtimestamp(commit.commit_time)
 
             repos.append((repo_name.group('dir'), commit, lastchange, author))
-        except:
-            # TODO: Put some real exceptions in here
-            pass
 
     # Sort the repos alphabetically
-    repos = sorted(repos, key=lambda repo : repo[0])
+    repos = sorted(repos, key=lambda repo: repo[0])
 
-    return render_to_response('djangit/list_repos.html', 
-                              {'repos': repos}, 
+    return render_to_response('djangit/list_repos.html',
+                              {'repos': repos},
                               context_instance=RequestContext(request))
 
 
@@ -102,11 +109,13 @@ def show_repo(request, repo_name, identifier):
     and identifier which come from the URL.
     """
 
-    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+
+    context = {}
 
     # Getting the latest commit.
     commit = repo[repo.ref('refs/heads/' + identifier)]
-    author = getAuthor(commit)
+    author = get_author(commit)
 
     # Getting the last change date
     lastchange = datetime.fromtimestamp(commit.commit_time)
@@ -114,10 +123,7 @@ def show_repo(request, repo_name, identifier):
     # Getting the tree of latest commit.
     tree = repo[commit.tree]
 
-    # Getting entries from the tree.
-    tree_entries = tree.entries()
-
-    trees, blobs = seperate_tree_entries(tree_entries, "", repo)
+    trees, blobs = seperate_tree_entries(tree, "", repo)
 
     # References
     refs = []
@@ -132,25 +138,27 @@ def show_repo(request, repo_name, identifier):
             refs.append(parts[-1])
 
     # We want to show the readme file, if it exists
-    try:
-        if tree['README.markdown']:
-            readme = repo[tree['README.markdown'][1]]
+    if 'README.markdown' in tree:
+        context['readme'] = repo[tree['README.markdown'][1]]
+    elif 'README.md' in tree:
+        context['readme'] = repo[tree['README.md'][1]]
 
-    except:
-        # Exception type?
-        readme = ""
-
-    return render_to_response('djangit/show_repo.html', {
+    context.update({
         'repo_name': repo_name,
         'identifier': identifier,
         'commit': commit,
         'author': author,
-        'lastchange' : lastchange,
+        'lastchange': lastchange,
         'refs': refs,
         'trees': trees,
         'blobs': blobs,
-        'readme': readme,
-    }, context_instance=RequestContext(request))
+    })
+
+    return render_to_response(
+        'djangit/show_repo.html',
+        context,
+        context_instance=RequestContext(request)
+    )
 
 
 def list_commits(request, repo_name, identifier):
@@ -160,25 +168,19 @@ def list_commits(request, repo_name, identifier):
     all commits, of the provided identifier.
     """
 
-    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
 
     # Since revision_history wants the whole name of the reference, incl.
     # the refs/head/ part we need to prepend that to the identifier.
-    commits = repo.revision_history('refs/heads/' + identifier)
 
-    commitholder = []
+    walker = Walker(repo, [repo.head()])
 
-    for commit in commits:
-        comobj = {}
-        comobj['commitdate'] = datetime.fromtimestamp(commit.commit_time)
-        comobj['author'] = getAuthor(commit)
-        comobj['commit'] = commit
-        commitholder.append(comobj)
+    commits = [commit for commit in walker]
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,
         'identifier': identifier,
-        'commits': commitholder,
+        'commits': commits,
     }, context_instance=RequestContext(request))
 
 
@@ -193,7 +195,7 @@ def show_tree(request, repo_name, identifier, tree_path):
     render_to_response to show this lovely tree to the world.
     """
 
-    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
 
     # Check if the identifier is 40 chars, if so it must be a sha
     if len(identifier) == 40:
@@ -203,12 +205,10 @@ def show_tree(request, repo_name, identifier, tree_path):
         tree = repo[repo['refs/heads/' + identifier].tree]
 
     if tree_path:
-        for part in tree_path.split('/'): 
+        for part in tree_path.split('/'):
             tree = repo[tree[part][1]]
 
-    tree_entries = tree.entries()
-
-    trees, blobs = seperate_tree_entries(tree_entries, tree_path, repo)
+    trees, blobs = seperate_tree_entries(tree, tree_path, repo)
 
     return render_to_response('djangit/show_tree.html', {
         'repo_name': repo_name,
@@ -222,21 +222,23 @@ def show_tree(request, repo_name, identifier, tree_path):
 def show_blob(request, repo_name, identifier, blob_path):
     """ Show blob
     Creates a repo object, checks if it comes from a normal name or sha value
-    identifier, finds it's way to the right tree (which actually in the end is a
-    blob, so it is quite misleading that we are calling the variable a tree)
+    identifier, finds it's way to the right tree (which actually in the end is
+    a blob, so it is quite misleading that we are calling the variable a tree)
     and then in the end render_to_response to show the world this blobby blob!
 
     Another quite confusing thing is that when checking out a tree from a SHA,
     the identifier is of course the tree, and therefore commit is a tree.
     """
 
-    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+
+    context = {}
 
     if len(identifier) == 40:
         commit = repo[identifier]
 
         # Quite a hack, there must be a more elegant way of doing this
-        if commit.__class__ == dulwich.objects.Tree:
+        if commit.__class__ == Tree:
             tree = repo[commit.id]
         else:
             tree = repo[commit.tree]
@@ -248,23 +250,30 @@ def show_blob(request, repo_name, identifier, blob_path):
         part = part.encode('utf-8')
         tree = repo[tree[part][1]]
 
-    blob = str(tree).split('\n')
-
-    # Get the linecount - make it start at 1
-    linecount = range(1, len(blob))
+    filext = blob_path.split('/')[-1].split('.')[-1]
 
     markdown = False
-
-    if re.search('\w*.markdown', blob_path.split('/')[-1]):
+    if filext in ['markdown', 'md']:
         markdown = True
 
-    return render_to_response('djangit/show_blob.html', {
+    if markdown:
+        blob = tree
+    else:
+        blob = str(tree).split('\n')
+        context['linecount'] = range(1, len(blob))
+
+    context.update({
         'repo_name': repo_name,
         'blob': blob,
-        'linecount' : linecount,
         'markdown': markdown,
         'tree_path': blob_path
-    }, context_instance=RequestContext(request))
+    })
+
+    return render_to_response(
+        'djangit/show_blob.html',
+        context,
+        context_instance=RequestContext(request)
+    )
 
 
 def show_commit(request, repo_name, sha):
@@ -278,8 +287,8 @@ def show_commit(request, repo_name, sha):
     TODO: write the part that finds the diff's into a function of it's own!
     """
 
-    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
-    
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+
     obj_store = repo.object_store
 
     commit = repo[sha]
@@ -288,7 +297,7 @@ def show_commit(request, repo_name, sha):
         # Right now we only support single parents
         commit_parent = repo[commit.parents[0]]
         changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
-        
+
         diffs = make_diffs(changes, repo)
     else:
         diffs = []
@@ -296,14 +305,13 @@ def show_commit(request, repo_name, sha):
             blob = repo[entry[2]]
             diffs.append((entry[0], blob._get_data()))
 
-    author = getAuthor(commit)
-
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
         'commit': commit,
-        'author':author,
+        'author': get_author(commit),
         'diffs': diffs,
     }, context_instance=RequestContext(request))
+
 
 def make_diffs(changes, repo):
     """
@@ -314,7 +322,6 @@ def make_diffs(changes, repo):
         # change[0] is a tuple with new and old name
         # change[1] is a tuple with new and old mode
         # change[2] is a tuple with new and old sha
-
 
         # If there is a SHA for the new file, ie. the file hasn't been
         # deleted, then just go on and get the contents, otherwise set it
@@ -335,10 +342,10 @@ def make_diffs(changes, repo):
             old_data = ""
 
         diff = difflib.unified_diff(
-                old_data,
-                new_data,
-                fromfile=change[0][0],
-                tofile=change[0][1])
+            old_data,
+            new_data,
+            fromfile=change[0][0],
+            tofile=change[0][1])
 
         # If the file has just been altered, and not deleted or created,
         # set the blob name to a string with both new and old name.
@@ -361,12 +368,13 @@ def make_diffs(changes, repo):
 
     return diffs
 
+
 def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
-    ''' Show blob diff's using difflib 
+    ''' Show blob diff's using difflib
     TODO: this view need some love and understanding
-    
+
     '''
-    repo = dulwich.repo.Repo(config.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
 
     blob1 = repo[blob1_sha]
     blob2 = repo[blob2_sha]
@@ -375,13 +383,13 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
     # If so, use that file
     # To be implemented :P
 
-    #htmldiffer = difflib.HtmlDiff()
-    #diff_html = htmldiffer.make_table(blob1.data.split('\n'), 
+    # htmldiffer = difflib.HtmlDiff()
+    # diff_html = htmldiffer.make_table(blob1.data.split('\n'),
     #                                  blob2.data.split('\n'))
 
     diff = difflib.context_diff(blob2.data.split('\n'),
-            blob1.data.split('\n'))
-    
+                                blob1.data.split('\n'))
+
     diff_string = ""
     for line in diff:
         diff_string += line + '\n'
@@ -393,29 +401,33 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
         'diff': diff_string,
     }, context_instance=RequestContext(request))
 
-def getAuthor(commit):
+
+def get_author(commit):
     ms = commit.author.index('<')
     name = commit.author[:ms].strip(' ')
-    email = commit.author[ms+1:-1]
-    gravatar = getGravatar(email, 40)
+    email = commit.author[ms + 1:-1]
+    gravatar = get_gravatar(email, 40)
 
     author = {
-        'name' : name,
-        'email' : email,
-        'gravatar' : gravatar,
+        'name': name,
+        'email': email,
+        'gravatar': gravatar,
     }
 
     return author
 
-def getGravatar(email, size):
+
+def get_gravatar(email, size):
     # import code for encoding urls and generating md5 hashes
-    import urllib, hashlib
+    import urllib
+    import hashlib
 
     # Set your variables here
     default = "monsterid"
 
     # construct the url
-    gravatar_url = "https://secure.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
-    gravatar_url += urllib.urlencode({'d':default, 's':str(size)})    
+    gravatar_url = "https://secure.gravatar.com/avatar/" + \
+        hashlib.md5(email.lower()).hexdigest() + "?"
+    gravatar_url += urllib.urlencode({'d': default, 's': str(size)})
 
     return gravatar_url

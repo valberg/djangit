@@ -7,21 +7,19 @@
 
     <div id="git-log">
 
-        {% for comobj in commits %}
-            <div class="commitlistdate" name="{{comobj.commitdate|date:"dmY"}}">
-                <strong>{{comobj.commitdate|date:"l F d Y"}}</strong>
-            </div>
-            <div>
-                <div>
-                    <strong class="commit-time">{{ comobj.commitdate|date:"H:i" }}</strong>
-                    <span class="commit-author" title="{{comobj.author.email}}">
-                        <img src="{{comobj.author.gravatar}}" width="16" height="16" />
-                        {{comobj.author.name}}
-                    </span>
-                    <strong>committed</strong> <a href="{% url djangit.views.show_commit repo_name comobj.commit.id %}" class="sha">{{ comobj.commit.id }}</a>
-                </div>
-                <pre class="commit-message">{{comobj.commit.message}}</pre>
-            </div>
+        {% for commit in commits %}
+
+            {{ commit }}<br />
+
+            {% with commit.changes.pop as change %}
+
+                New: {{ change.new }}<br />
+                Old: {{ change.old }}
+
+            {% endwith %}
+
+            <hr />
+
         {% endfor %}
 
     </div>

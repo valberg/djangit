@@ -1,23 +1,38 @@
-<div class="commit-info">
-    <div class="commit_message">{{ commit.message }}</div>
-    <img src="{{author.gravatar}}" width="40" height="40" />
-    <b>{{ author.name }}</b>
-    <br />
-    <span class="dateinfo">
-        {{ lastchange|date:"l F d Y" }}<br />
-        {{ lastchange|date:"H:i" }}
-    </span>
-    <br />
-    <br />
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ commit.message }}</h3>
+    </div>
 
-    Commit: 
-    <a href="{% url djangit.views.show_commit repo_name commit.id %}" class="sha">{{ commit.id }}</a><br />
+    <div class="panel-body">
+        <div class="pull-left">
+            <img src="{{author.gravatar}}" width="20" height="20" />
+            <b>{{ author.name }}</b><br />
+            <small class="muted">{{ lastchange|timesince }}</small>
+        </div>
 
-    Tree: 
-    <a href="{% url djangit.views.show_tree repo_name commit.tree tree %}" class="sha">{{ commit.tree }}</a><br />
+        <div class="pull-right">
+            {% if commit.parents %}
+                {{ commit.parents|length }} {% if commit.parents|length > 1 %}parents{% else %}parent{% endif %}
+                {% for parent in commit.parents %}
+                    <a href="{% url 'djangit:show_commit' repo_name parent %}" class="sha">{{ parent|truncatechars:10 }}</a><br />
+                {% endfor %}
+            {% endif %}
 
-    Parents: 
-    {% for parent in commit.parents %}
-        <a href="{% url djangit.views.show_commit repo_name parent %}" class="sha">{{ parent }}</a><br />
-    {% endfor %}
+            <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id|truncatechars:10 }}</a><br />
+        </div>
+    </div>
 </div>
+
+{% comment %}
+    Commit:
+    <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id }}</a><br />
+
+    Tree:
+    <a href="{% url 'djangit:show_tree' repo_name commit.tree tree %}" class="sha">{{ commit.tree }}</a><br />
+
+    Parents:
+    {% for parent in commit.parents %}
+        <a href="{% url 'djangit:show_commit' repo_name parent %}" class="sha">{{ parent }}</a><br />
+    {% endfor %}
+{% endcomment %}
+

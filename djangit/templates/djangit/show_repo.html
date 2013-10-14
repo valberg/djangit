@@ -4,8 +4,6 @@
 
 {% block content %}
 
-    {% include "djangit/top.html" %}
-
     <div class="floatwrapper">
 
         <div id="latest">
@@ -18,10 +16,9 @@
 
     </div>
 
-    <hr />
-
     {% if readme %}
+        <hr />
         {{ readme|markdown }}
     {% endif %}
-    
+
 {% endblock %}
