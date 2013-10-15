@@ -22,7 +22,6 @@ djangit is a git web frontend written with django and dulwich.
 Installable from pypi:
 - Django
 - Dulwich
-- Markup
 
 Other requirements:
 - Git
