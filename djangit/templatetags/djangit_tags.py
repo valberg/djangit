@@ -1,14 +1,16 @@
 from datetime import datetime
 
 from django import template
+from django.conf import settings
 
-from djangit.views import get_author
+from dulwich.repo import Repo
+from djangit.utils import seperate_tree_entries, get_author
 
 register = template.Library()
 
 
 @register.inclusion_tag('djangit/includes/commit_info.html')
-def djangit_commit_info(commit, repo_name, link_to_tree=False):
+def djangit_commit_info(repo_name, commit, link_to_tree=False):
 
     author = get_author(commit)
 
@@ -20,4 +22,29 @@ def djangit_commit_info(commit, repo_name, link_to_tree=False):
         'commit_time': commit_time,
         'repo_name': repo_name,
         'link_to_tree': link_to_tree,
+    }
+
+
+@register.inclusion_tag('djangit/includes/tree.html')
+def djangit_tree(repo_name, identifier, path=None):
+
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+
+    # Check if the identifier is 40 chars, if so it must be a sha
+    if len(identifier) == 40:
+        tree = repo[identifier]
+    # else it's just a normal reference name.
+    else:
+        tree = repo[repo['refs/heads/' + identifier].tree]
+
+    if path:
+        for part in path.split('/'):
+            tree = repo[tree[part][1]]
+
+    trees, blobs = seperate_tree_entries(tree, path, repo)
+    return {
+        'repo_name': repo_name,
+        'identifier': identifier,
+        'trees': trees,
+        'blobs': blobs,
     }

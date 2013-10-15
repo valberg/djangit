@@ -8,10 +8,10 @@ urlpatterns = patterns(
     url(r'^(?P<repo_name>[^/]+)/commits/(?P<identifier>[^/]*)/$',
         views.list_commits, name='list_commits'),
 
-    url(r'^(?P<repo_name>[^/]+)/tree/(?P<identifier>[^/]*)/(?P<tree_path>.*)$',
+    url(r'^(?P<repo_name>[^/]+)/tree/(?P<identifier>[^/]*)/(?P<path>.*)$',
         views.show_tree, name='show_tree'),
 
-    url(r'^(?P<repo_name>[^/]+)/blob/(?P<identifier>[^/]*)/(?P<blob_path>.*)$',
+    url(r'^(?P<repo_name>[^/]+)/blob/(?P<identifier>[^/]*)/(?P<path>.*)$',
         views.show_blob, name='show_blob'),
 
     url(r'^(?P<repo_name>[^/]+)/blob/(?P<blob1_sha>\w{40}):(?P<blob2_sha>\w{40})$',

@@ -4,9 +4,9 @@
 
 {% block content %}
 
-    {% djangit_commit_info commit repo_name %}
+    {% djangit_commit_info repo_name commit %}
 
-    {% include "djangit/tree.html" %}
+    {% djangit_tree repo_name identifier path=path %}
 
     {% if readme %}
         <hr />

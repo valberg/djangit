@@ -1,5 +1,6 @@
 {% extends "djangit/base.html" %}
+{% load djangit_tags %}
 
 {% block content %}
-    {% include "djangit/tree.html" %}
+    {% djangit_tree repo_name identifier path=path %}
 {% endblock %}

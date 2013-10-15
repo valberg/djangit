@@ -27,32 +27,7 @@ from dulwich.walk import Walker
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
-
-
-def seperate_tree_entries(tree, tree_path, repo):
-    """ Seperates tree entries
-
-    Iterates through the tree entries to place trees in one list and blobs in
-    another depending on the entrys type_num.
-
-    """
-    trees = []
-    blobs = []
-
-    for name, mode, sha in tree.iteritems():
-        if tree_path:
-            url = tree_path + '/' + name.decode('utf-8')
-        else:
-            url = name.decode('utf-8')
-
-        entry = repo.get_object(sha)
-
-        if entry.type_num == 2:
-            trees.append((mode, name, url, sha))
-        elif entry.type_num == 3:
-            blobs.append((mode, name, url, sha))
-
-    return trees, blobs
+from djangit.utils import get_author
 
 
 def list_repos(request):
@@ -119,8 +94,6 @@ def show_repo(request, repo_name, identifier):
     # Getting the tree of latest commit.
     tree = repo[commit.tree]
 
-    trees, blobs = seperate_tree_entries(tree, "", repo)
-
     # References
     refs = []
 
@@ -144,8 +117,6 @@ def show_repo(request, repo_name, identifier):
         'identifier': identifier,
         'commit': commit,
         'refs': refs,
-        'trees': trees,
-        'blobs': blobs,
     })
 
     return render_to_response(
@@ -178,7 +149,7 @@ def list_commits(request, repo_name, identifier):
     }, context_instance=RequestContext(request))
 
 
-def show_tree(request, repo_name, identifier, tree_path):
+def show_tree(request, repo_name, identifier, path):
     """ Show tree
 
     Creates a repo object from repo_name, checks identifier for if it's a sha
@@ -189,31 +160,17 @@ def show_tree(request, repo_name, identifier, tree_path):
     render_to_response to show this lovely tree to the world.
     """
 
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
-
-    # Check if the identifier is 40 chars, if so it must be a sha
-    if len(identifier) == 40:
-        tree = repo[identifier]
-    # else it's just a normal reference name.
-    else:
-        tree = repo[repo['refs/heads/' + identifier].tree]
-
-    if tree_path:
-        for part in tree_path.split('/'):
-            tree = repo[tree[part][1]]
-
-    trees, blobs = seperate_tree_entries(tree, tree_path, repo)
-
-    return render_to_response('djangit/show_tree.html', {
-        'repo_name': repo_name,
-        'identifier': identifier,
-        'tree_path': tree_path,
-        'trees': trees,
-        'blobs': blobs,
-    }, context_instance=RequestContext(request))
+    return render_to_response(
+        'djangit/show_tree.html', {
+            'repo_name': repo_name,
+            'identifier': identifier,
+            'path': path,
+        },
+        context_instance=RequestContext(request)
+    )
 
 
-def show_blob(request, repo_name, identifier, blob_path):
+def show_blob(request, repo_name, identifier, path):
     """ Show blob
     Creates a repo object, checks if it comes from a normal name or sha value
     identifier, finds it's way to the right tree (which actually in the end is
@@ -240,11 +197,11 @@ def show_blob(request, repo_name, identifier, blob_path):
     else:
         tree = repo[repo['refs/heads/' + identifier].tree]
 
-    for part in blob_path.split('/'):
+    for part in path.split('/'):
         part = part.encode('utf-8')
         tree = repo[tree[part][1]]
 
-    filext = blob_path.split('/')[-1].split('.')[-1]
+    filext = path.split('/')[-1].split('.')[-1]
 
     markdown = False
     if filext in ['markdown', 'md']:
@@ -260,7 +217,7 @@ def show_blob(request, repo_name, identifier, blob_path):
         'repo_name': repo_name,
         'blob': blob,
         'markdown': markdown,
-        'tree_path': blob_path
+        'tree_path': path
     })
 
     return render_to_response(
@@ -394,34 +351,3 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
         'blob2': blob2,
         'diff': diff_string,
     }, context_instance=RequestContext(request))
-
-
-def get_author(commit):
-    ms = commit.author.index('<')
-    name = commit.author[:ms].strip(' ')
-    email = commit.author[ms + 1:-1]
-    gravatar = get_gravatar(email, 40)
-
-    author = {
-        'name': name,
-        'email': email,
-        'gravatar': gravatar,
-    }
-
-    return author
-
-
-def get_gravatar(email, size):
-    # import code for encoding urls and generating md5 hashes
-    import urllib
-    import hashlib
-
-    # Set your variables here
-    default = "monsterid"
-
-    # construct the url
-    gravatar_url = "https://secure.gravatar.com/avatar/" + \
-        hashlib.md5(email.lower()).hexdigest() + "?"
-    gravatar_url += urllib.urlencode({'d': default, 's': str(size)})
-
-    return gravatar_url

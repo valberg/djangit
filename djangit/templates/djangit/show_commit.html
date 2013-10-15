@@ -5,7 +5,7 @@
 
     <h2>{{ repo_name }} - Commit</h2>
     <hr />
-    {% djangit_commit_info commit repo_name link_to_tree=True %}
+    {% djangit_commit_info repo_name commit link_to_tree=True %}
     <hr />
     {% for blob_name, diff in diffs %}
         <h3>{{ blob_name }}</h3>
