@@ -115,10 +115,6 @@ def show_repo(request, repo_name, identifier):
 
     # Getting the latest commit.
     commit = repo[repo.ref('refs/heads/' + identifier)]
-    author = get_author(commit)
-
-    # Getting the last change date
-    lastchange = datetime.fromtimestamp(commit.commit_time)
 
     # Getting the tree of latest commit.
     tree = repo[commit.tree]
@@ -147,8 +143,6 @@ def show_repo(request, repo_name, identifier):
         'repo_name': repo_name,
         'identifier': identifier,
         'commit': commit,
-        'author': author,
-        'lastchange': lastchange,
         'refs': refs,
         'trees': trees,
         'blobs': blobs,

@@ -1,16 +1,22 @@
-<div class="panel panel-info">
+<div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">{{ commit.message }}</h3>
+        <h3 class="panel-title">{{ commit.message }}
+            {% if link_to_tree %}
+                <a href="{% url 'djangit:show_tree' repo_name commit.tree '' %}" class="pull-right">
+                    Browse code
+                </a>
+            {% endif %}
+        </h3>
     </div>
 
     <div class="panel-body">
-        <div class="pull-left">
+        <span class="pull-left">
             <img src="{{author.gravatar}}" width="20" height="20" />
             <b>{{ author.name }}</b><br />
-            <small class="muted">{{ lastchange|timesince }}</small>
-        </div>
+            <small class="muted">{{ commit_time|timesince }}</small>
+        </span>
 
-        <div class="pull-right">
+        <span class="pull-right">
             {% if commit.parents %}
                 {{ commit.parents|length }} {% if commit.parents|length > 1 %}parents{% else %}parent{% endif %}
                 {% for parent in commit.parents %}
@@ -19,20 +25,7 @@
             {% endif %}
 
             <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id|truncatechars:10 }}</a><br />
-        </div>
+        </span>
     </div>
 </div>
-
-{% comment %}
-    Commit:
-    <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id }}</a><br />
-
-    Tree:
-    <a href="{% url 'djangit:show_tree' repo_name commit.tree tree %}" class="sha">{{ commit.tree }}</a><br />
-
-    Parents:
-    {% for parent in commit.parents %}
-        <a href="{% url 'djangit:show_commit' repo_name parent %}" class="sha">{{ parent }}</a><br />
-    {% endfor %}
-{% endcomment %}
 

@@ -1,20 +1,12 @@
 {% extends "djangit/base.html" %}
-
 {% load markup %}
+{% load djangit_tags %}
 
 {% block content %}
 
-    <div class="floatwrapper">
+    {% djangit_commit_info commit repo_name %}
 
-        <div id="latest">
-            {% include "djangit/commit_info.html" %}
-        </div>
-
-        <div id="treeview">
-            {% include "djangit/tree.html" %}
-        </div>
-
-    </div>
+    {% include "djangit/tree.html" %}
 
     {% if readme %}
         <hr />
