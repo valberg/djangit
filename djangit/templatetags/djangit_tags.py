@@ -35,7 +35,9 @@ def djangit_commit_info(repo_name, identifier, link_to_tree=False):
 
 
 @register.inclusion_tag('djangit/includes/tree.html')
-def djangit_tree(repo_name, identifier, path=None):
+def djangit_tree(repo_name, identifier, path=None, show_readme=True):
+
+    context = {}
 
     repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
 
@@ -50,10 +52,19 @@ def djangit_tree(repo_name, identifier, path=None):
         for part in path.split('/'):
             tree = repo[tree[part][1]]
 
+    if show_readme:
+        if 'README.markdown' in tree:
+            context['readme'] = repo[tree['README.markdown'][1]]
+        elif 'README.md' in tree:
+            context['readme'] = repo[tree['README.md'][1]]
+
     trees, blobs = seperate_tree_entries(tree, path, repo)
-    return {
+
+    context.update({
         'repo_name': repo_name,
         'identifier': identifier,
         'trees': trees,
         'blobs': blobs,
-    }
+    })
+
+    return context

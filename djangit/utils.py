@@ -28,7 +28,7 @@ def get_author(commit):
     ms = commit.author.index('<')
     name = commit.author[:ms].strip(' ')
     email = commit.author[ms + 1:-1]
-    gravatar = get_gravatar(email, 40)
+    gravatar = get_gravatar(email, 60)
 
     author = {
         'name': name,

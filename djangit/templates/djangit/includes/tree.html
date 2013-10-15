@@ -1,3 +1,5 @@
+{% load markup %}
+
 <table class="table table-striped">
   <tbody>
 
@@ -24,3 +26,8 @@
         {% endfor %}
 {% endif %}
 </table>
+
+{% if readme %}
+    <hr />
+    {{ readme|markdown }}
+{% endif %}

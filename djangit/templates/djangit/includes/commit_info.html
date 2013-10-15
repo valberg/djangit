@@ -10,11 +10,16 @@
     </div>
 
     <div class="panel-body">
-        <span class="pull-left">
-            <img src="{{author.gravatar}}" width="20" height="20" />
-            <b>{{ author.name }}</b><br />
-            <small class="muted">{{ commit_time|timesince }}</small>
-        </span>
+        <div class="media pull-left">
+            <a class="pull-left" href="#">
+                <img src="{{author.gravatar}}" width="60" height="60" class="img-rounded media-object" />
+            </a>
+
+            <div class="media-body">
+                <h4 class="media-heading">{{ author.name }}</h4>
+                {{ commit_time|timesince }} ago
+            </div>
+        </div>
 
         <span class="pull-right">
             {% if commit.parents %}
