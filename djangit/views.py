@@ -88,12 +88,6 @@ def show_repo(request, repo_name, identifier):
 
     context = {}
 
-    # Getting the latest commit.
-    commit = repo[repo.ref('refs/heads/' + identifier)]
-
-    # Getting the tree of latest commit.
-    tree = repo[commit.tree]
-
     # References
     refs = []
 
@@ -106,16 +100,9 @@ def show_repo(request, repo_name, identifier):
             parts = ref.split('/')
             refs.append(parts[-1])
 
-    # We want to show the readme file, if it exists
-    if 'README.markdown' in tree:
-        context['readme'] = repo[tree['README.markdown'][1]]
-    elif 'README.md' in tree:
-        context['readme'] = repo[tree['README.md'][1]]
-
     context.update({
         'repo_name': repo_name,
         'identifier': identifier,
-        'commit': commit,
         'refs': refs,
     })
 
@@ -258,8 +245,7 @@ def show_commit(request, repo_name, sha):
 
     return render_to_response('djangit/show_commit.html', {
         'repo_name': repo_name,
-        'commit': commit,
-        'author': get_author(commit),
+        'sha': sha,
         'diffs': diffs,
     }, context_instance=RequestContext(request))
 

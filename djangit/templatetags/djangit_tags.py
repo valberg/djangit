@@ -10,7 +10,16 @@ register = template.Library()
 
 
 @register.inclusion_tag('djangit/includes/commit_info.html')
-def djangit_commit_info(repo_name, commit, link_to_tree=False):
+def djangit_commit_info(repo_name, identifier, link_to_tree=False):
+
+    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+
+    if len(identifier) == 40:
+        # It's a SHA
+        commit = repo[identifier]
+    else:
+        # It's probably not a SHA
+        commit = repo[repo.ref('refs/heads/' + identifier)]
 
     author = get_author(commit)
 
