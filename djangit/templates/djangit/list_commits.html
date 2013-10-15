@@ -1,4 +1,5 @@
 {% extends "djangit/base.html" %}
+{% load djangit_tags %}
 
 {% block content %}
 
@@ -9,16 +10,8 @@
 
         {% for commit in commits %}
 
-            {{ commit }}<br />
+            {% djangit_commit_info repo_name commit.id %}
 
-            {% with commit.changes.pop as change %}
-
-                New: {{ change.new }}<br />
-                Old: {{ change.old }}
-
-            {% endwith %}
-
-            <hr />
 
         {% endfor %}
 

@@ -127,7 +127,7 @@ def list_commits(request, repo_name, identifier):
 
     walker = Walker(repo, [repo.head()])
 
-    commits = [commit for commit in walker]
+    commits = [commit.commit for commit in walker]
 
     return render_to_response('djangit/list_commits.html', {
         'repo_name': repo_name,
