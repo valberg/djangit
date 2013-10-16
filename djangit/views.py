@@ -42,27 +42,47 @@ class RepositoryList(ListView):
     context_object_name = 'repos'
 
 
-def list_commits(request, repo_name, identifier):
-    """ List all commits for ref
+class RepositoryShowCommit(RepositoryView):
+    template_name = 'djangit/show_commit.html'
 
-    Creates a repo objects using repo_name, and gets revision history, that is
-    all commits, of the provided identifier.
-    """
+    def get_context_data(self, **kwargs):
+        context = super(RepositoryShowCommit, self).get_context_data(**kwargs)
 
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+        repo_object = self.object.get_repo_object()
+        object_store = repo_object.object_store
+        commit = repo_object[self.kwargs['sha']]
 
-    # Since revision_history wants the whole name of the reference, incl.
-    # the refs/head/ part we need to prepend that to the identifier.
+        if commit.parents:
+            # TODO: !!! Right now we only support single parents !!!
+            commit_parent = repo_object[commit.parents[0]]
+            changes = object_store.tree_changes(commit.tree, commit_parent.tree)
+            diffs = make_diffs(changes, repo_object)
 
-    walker = Walker(repo, [repo.head()])
+        else:
+            diffs = []
+            for entry in object_store.iter_tree_contents(commit.tree):
+                blob = repo_object[entry[2]]
+                diffs.append((entry[0], blob._get_data()))
 
-    commits = [commit.commit for commit in walker]
+        context['diffs'] = diffs
 
-    return render_to_response('djangit/list_commits.html', {
-        'repo_name': repo_name,
-        'identifier': identifier,
-        'commits': commits,
-    }, context_instance=RequestContext(request))
+        return context
+
+
+class RepositoryListCommits(RepositoryView):
+    template_name = 'djangit/list_commits.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RepositoryListCommits, self).get_context_data(**kwargs)
+
+        repo_object = self.object.get_repo_object()
+
+        walker = Walker(repo_object, [repo_object.head()])
+
+        context['commits'] = [commit.commit for commit in walker]
+
+        return context
+
 
 
 def show_blob(request, repo_name, identifier, path):
@@ -120,42 +140,6 @@ def show_blob(request, repo_name, identifier, path):
         context,
         context_instance=RequestContext(request)
     )
-
-
-def show_commit(request, repo_name, sha):
-    """ Show commit
-
-    Pretty straight forward:
-    1. create a repo object
-    2. find commit via sha value
-    3. use render_to_response to show the world!
-
-    TODO: write the part that finds the diff's into a function of it's own!
-    """
-
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
-
-    obj_store = repo.object_store
-
-    commit = repo[sha]
-
-    if commit.parents:
-        # Right now we only support single parents
-        commit_parent = repo[commit.parents[0]]
-        changes = obj_store.tree_changes(commit.tree, commit_parent.tree)
-
-        diffs = make_diffs(changes, repo)
-    else:
-        diffs = []
-        for entry in obj_store.iter_tree_contents(commit.tree):
-            blob = repo[entry[2]]
-            diffs.append((entry[0], blob._get_data()))
-
-    return render_to_response('djangit/show_commit.html', {
-        'repo_name': repo_name,
-        'sha': sha,
-        'diffs': diffs,
-    }, context_instance=RequestContext(request))
 
 
 def make_diffs(changes, repo):

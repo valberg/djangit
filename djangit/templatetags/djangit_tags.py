@@ -12,14 +12,14 @@ register = template.Library()
 @register.inclusion_tag('djangit/includes/commit_info.html')
 def djangit_commit_info(repo, identifier, link_to_tree=False):
 
-    repo = repo.get_repo_object()
+    repo_object = repo.get_repo_object()
 
     if len(identifier) == 40:
         # It's a SHA
-        commit = repo[identifier]
+        commit = repo_object[identifier]
     else:
         # It's probably not a SHA
-        commit = repo[repo.ref('refs/heads/' + identifier)]
+        commit = repo_object[repo_object.ref('refs/heads/' + identifier)]
 
     commit_time = datetime.fromtimestamp(commit.commit_time)
 
@@ -27,6 +27,7 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
         'commit': commit,
         'commit_time': commit_time,
         'link_to_tree': link_to_tree,
+        'repo_name': repo.name,
     }
 
 

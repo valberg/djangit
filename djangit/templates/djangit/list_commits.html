@@ -3,14 +3,14 @@
 
 {% block content %}
 
-    <h2>{{ repo_name }} : {{ identifier }} - Log</h2>
+    <h2>{{ repo.name }} : {{ identifier }} - Log</h2>
     <hr />
 
     <div id="git-log">
 
         {% for commit in commits %}
 
-            {% djangit_commit_info repo_name commit.id link_to_tree=True %}
+            {% djangit_commit_info repo commit.id link_to_tree=True %}
 
         {% endfor %}
 

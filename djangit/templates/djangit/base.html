@@ -35,9 +35,9 @@
     <ul class="nav navbar-nav">
       <li><a href="/">Repo list</a></li>
     </ul>
-    {% if repo_name %}
+    {% if repo %}
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="{% url 'djangit:list_commits' repo_name 'master' %}">Commits</a></li>
+      <li><a href="{% url 'djangit:list_commits' repo.name 'master' %}">Commits</a></li>
     </ul>
     {% endif %}
   </div><!-- /.navbar-collapse -->

@@ -5,8 +5,8 @@ from . import views
 urlpatterns = patterns(
     '',
 
-    url(r'^(?P<repo_name>[^/]+)/commits/(?P<identifier>[^/]*)/$',
-        views.list_commits, name='list_commits'),
+    url(r'^(?P<name>[^/]+)/commits/(?P<identifier>[^/]*)/$',
+        views.RepositoryListCommits.as_view(), name='list_commits'),
 
     url(r'^(?P<name>[^/]+)/tree/(?P<identifier>[^/]*)/(?P<path>.*)$',
         views.RepositoryShowTree.as_view(), name='show_tree'),
@@ -17,8 +17,8 @@ urlpatterns = patterns(
     url(r'^(?P<repo_name>[^/]+)/blob/(?P<blob1_sha>\w{40}):(?P<blob2_sha>\w{40})$',
         views.show_blob_diff, name='show_blob_diff'),
 
-    url(r'^(?P<repo_name>[^/]+)/commit/(?P<sha>\w{40})$',
-        views.show_commit, name='show_commit'),
+    url(r'^(?P<name>[^/]+)/commit/(?P<sha>\w{40})$',
+        views.RepositoryShowCommit.as_view(), name='show_commit'),
 
     url(r'^(?P<name>[^/]+)/(?P<identifier>[^/]+)$',
         views.RepositoryDetail.as_view(), name='show_repo'),
