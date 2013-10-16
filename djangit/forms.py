@@ -1,29 +1,17 @@
-import os
-
 from django import forms
 
-from .utils import get_repo_path
+from .models import Repository
 
 
-class NewRepoForm(forms.Form):
+class CreateRepoForm(forms.ModelForm):
     """
     Form for creation of new repositories.
     """
 
-    repo_name = forms.CharField()
-
-    description = forms.CharField(
-        widget=forms.Textarea()
-    )
-
     initial_commit = forms.BooleanField()
 
-    def clean_repo_name(self):
-        """
-        Check if there is already a directory with that name.
-        """
+    class Meta:
+        model = Repository
 
-        if os.path.exists(get_repo_path(self.cleaned_data['repo_name'])):
-            raise forms.ValidationError('Repo already exists!')
-
-        return self.cleaned_data['repo_name']
+    def clean_name(self):
+        return self.cleaned_data['name'].replace(' ', '-')

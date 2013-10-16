@@ -29,8 +29,9 @@ from dulwich.walk import Walker
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.conf import settings
-from djangit.forms import NewRepoForm
-from djangit.utils import get_author, new_repo
+from djangit import models
+from djangit.forms import CreateRepoForm
+from djangit.utils import get_author
 
 
 def list_repos(request):
@@ -342,15 +343,20 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
     }, context_instance=RequestContext(request))
 
 
-class NewRepoView(FormView):
-    form_class = NewRepoForm
-    template_name = 'djangit/new_repo.html'
+class CreateRepoView(FormView):
+    form_class = CreateRepoForm
+    template_name = 'djangit/create_repo.html'
 
     def form_valid(self, form):
-        repo_name = form.cleaned_data['repo_name']
+        name = form.cleaned_data['name']
         description = form.cleaned_data['description']
         initial_commit = form.cleaned_data['initial_commit']
 
-        repo = new_repo(repo_name, description=description, initial_commit=initial_commit)
+        repo = models.Repository(
+            name=name,
+            description=description,
+        )
+
+        repo.save(initial_commit=initial_commit)
 
         return redirect(reverse('djangit:list_repos'))

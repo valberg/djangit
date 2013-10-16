@@ -69,7 +69,7 @@ def get_gravatar(email, size):
     return gravatar_url
 
 
-def new_repo(repo_name, description=None, initial_commit=False):
+def create_repo(repo_name, description=None, initial_commit=False):
     """
     Create a repository at settings.GIT_REPOS_DIR + repo_name + '.git'
     """

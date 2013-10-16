@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a href="{% url 'djangit:new_repo' %}" class="btn btn-success">New repository</a>
+<a href="{% url 'djangit:create_repo' %}" class="btn btn-success">Create a repository</a>
 <hr />
 
 {% for repo, repo_name, commit, lastchange, author in repos %}

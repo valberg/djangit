@@ -5,5 +5,6 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('djangit.urls', namespace='djangit', app_name='djangit')),
 )
