@@ -4,6 +4,16 @@
 
 {% block content %}
 
+    <div class="descriptor">
+        <h1>{{ repo_name }}</h1>
+        <span>A git repo browser written in django and dulwich</span>
+        <div class="activity_display">
+            <ul>
+                <li><b>111</b> commits</li><li><b>1</b> branch</li><li><b>0</b> releases</li><li><b>2</b> contributers</li>
+            </ul>
+        </div>
+    </div>
+
     {% djangit_commit_info repo_name identifier %}
 
     {% djangit_tree repo_name identifier path=path %}

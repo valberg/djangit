@@ -1,11 +1,24 @@
+<section class="last_commit">
+    <div class="last_commit_icon">
+        <i class="icon-save"></i>
+    </div>
+    <div class="last_commit_message">
+        {{ commit.message }}
+        {% if link_to_tree %}
+            <a href="{% url 'djangit:show_tree' repo_name commit.tree '' %}" class="pull-right">
+                Browse code
+            </a>
+        {% endif %}
+    </div>
+    <div class="last_commit_user">
+        <i class="icon-user"></i> <span class="name">{{ author.name }}</span> commited {{ commit_time|timesince }} ago
+    </div>
+</section>
+
+{% comment %}
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">{{ commit.message }}
-            {% if link_to_tree %}
-                <a href="{% url 'djangit:show_tree' repo_name commit.tree '' %}" class="pull-right">
-                    Browse code
-                </a>
-            {% endif %}
         </h3>
     </div>
 
@@ -34,3 +47,4 @@
     </div>
 </div>
 
+{% endcomment %}

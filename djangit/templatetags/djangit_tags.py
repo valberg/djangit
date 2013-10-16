@@ -68,3 +68,11 @@ def djangit_tree(repo_name, identifier, path=None, show_readme=True):
     })
 
     return context
+
+@register.inclusion_tag('djangit/includes/breadcrumb.html')
+def djangit_breadcrumb(repo_name, tree):
+    pass
+
+@register.inclusion_tag('djangit/includes/breadcrumb.html')
+def djangit_repo_info(repo_name):
+    pass

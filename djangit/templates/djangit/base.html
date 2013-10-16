@@ -2,10 +2,10 @@
 <html>
 <head>
     <link rel="stylesheet"
-        href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+        href="{{ STATIC_URL }}css/bootstrap-djangit.css">
 
     <link rel="stylesheet"
-        href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css">
+        href="{{ STATIC_URL }}css/font-awesome.min.css">
 
     <style>
         .navbar-brand {
@@ -25,7 +25,8 @@
       <span class="icon-bar"></span>
     </button>
     <a class="navbar-brand" href="#">
-    <img src="{{ STATIC_URL }}img/djangit-logo.png" alt="Djangit" />
+    <img id="djangit-logo" src="{{ STATIC_URL }}img/djangit-logo.png"
+         height="30" width="97" alt="djangit" border="0" />
     </a>
   </div>
 
@@ -42,15 +43,15 @@
   </div><!-- /.navbar-collapse -->
 </nav>
 
-    <div class="container">
+    <main class="container">
 {% block content %}
 
 {% endblock %}
-    </div>
+    </main>
 
 <script
     src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script
-    src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 </body>
 </html>

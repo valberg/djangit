@@ -1,0 +1,218 @@
+// Djangit LESS file
+
+// Overwrite some bootstrap variables:
+@container-lg-desktop:        ((940px + @grid-gutter-width));
+
+
+@font-face {
+  font-family: 'OpenSans Regular';
+  src: url('../font/OpenSans-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'OpenSans Light';
+  src: url('../font/OpenSans-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OpenSans Bold';
+  src: url('../font/OpenSans-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+body {
+  margin : 0;
+  padding : 0;
+  background : #fff;
+  font-family : 'OpenSans Regular';
+  text-rendering: optimizelegibility;
+  line-height : 150%;
+  color : rgba(0, 0, 0, 0.7);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin : 0 0 15px 0;
+  padding : 0;
+  font-family : 'OpenSans Light';
+  font-weight : normal;
+  font-style : normal;
+}
+
+h1 { font-size : 2em; }
+h2 { font-size : 1.8em; }
+h3 { font-size : 1.6em; }
+h4 { font-size : 1.4em; }
+h5 { font-size : 1.2em; }
+h6 { font-size : 1em; }
+
+a, a:visited, a:active {
+  text-decoration  :  none;
+  color : #3376c9;
+}
+
+b {
+  font-family : 'OpenSans Bold';
+}
+
+.descriptor {
+  padding : 15px;
+  background : rgb(245, 245, 245);
+  font-family : 'OpenSans Light';
+  margin : 0 0 15px 0;
+}
+
+.box {
+  background : rgb(22, 160, 133);
+  padding : 15px;
+  color : rgba(255, 255, 255, 0.9);
+}
+
+.activity_display {
+  margin : 15px 0 0 0;
+  border : 1px rgba(225, 225, 225, 0.6) solid;
+  padding : 0px;
+  border-radius : 5px;
+  opacity : 0.7;
+}
+
+.activity_display ul {
+  margin : 0;
+  padding : 0;
+}
+
+.activity_display ul li {
+  display : inline-block;
+  width : 25%;
+  padding : 5px 0;
+  text-align : center;
+  background : #fff;
+}
+
+.activity_display ul li:first-child {
+  border-radius : 6px 0 0 6px;
+}
+
+.activity_display ul li:last-child {
+  border-radius : 0 6px 6px 0;
+}
+
+.activity_display ul li:hover {
+  background-color : #3376c9;
+  color : #fff;
+  cursor : pointer;
+}
+
+.breadcrumb {
+  margin  : 15px 0;
+  color : #ccc;
+  padding : 0;
+  background : transparent;
+}
+
+.breadcrumb span.current {
+  color : rgba(0, 0, 0, 0.7);
+}
+
+.branch {
+  border-radius : 3px;
+  background : rgb(22, 160, 133);
+  color : #fff;
+  padding : 3px 8px;
+  margin : 0 10px 0 0;
+}
+
+nav {
+  background : rgb(235, 235, 245) !important;
+
+  img#djangit-logo {
+    opacity :   0.4;
+    margin : 0 0 -10px 0;
+    -moz-transition : opacity 0.3s linear;
+  }
+
+  img#djangit-logo:hover {
+    opacity : 0.6;
+  }
+
+  a:hover {
+    background: @navbar-default-bg;
+  }
+}
+
+hr {
+  height : 0;
+  border : 0;
+  border-bottom : 1px rgba(120, 120, 120, 0.1) solid;
+  margin : 15px 0;
+  opacity : 0.7;
+}
+
+/* Latest commit */
+
+.last_commit {
+  height : 50px;
+  background : rgb(245, 245, 245);
+  margin : 0 0 15px 0;
+  padding : 0;
+}
+
+.last_commit_icon {
+  float : left;
+  width : 50px;
+  height : 50px;
+  background-color : #3376c9;
+  color : #fff;
+  text-align : center;
+  font-size : 40px;
+  margin : 0 15px 0 0;
+  opacity : 0.7;
+}
+
+.last_commit_message {
+  color : #666;
+  border-bottom : 1px #eee solid;
+  margin-left : 50px;
+}
+
+.last_commit_user {
+  color : #bbb;
+}
+
+.last_commit_user .name {
+  color : #888;
+}
+
+/* File view */
+
+table {
+  width : 100%;
+}
+
+table thead {
+}
+
+table tbody tr:nth-child(odd) {
+  background : #f4f4f4;
+}
+
+table tbody tr td {
+  padding : 7px 15px;
+}
+
+table .message {
+  color : #666;
+}
+
+table .age {
+  text-align : right;
+}
+
+table td.icon {
+  color : #666;
+  padding-right : 0;
+  padding-left : 15px;
+}

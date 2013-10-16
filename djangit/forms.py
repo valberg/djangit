@@ -8,7 +8,7 @@ class CreateRepoForm(forms.ModelForm):
     Form for creation of new repositories.
     """
 
-    initial_commit = forms.BooleanField()
+    initial_commit = forms.BooleanField(required=False)
 
     class Meta:
         model = Repository

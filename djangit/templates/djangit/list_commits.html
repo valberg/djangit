@@ -10,7 +10,7 @@
 
         {% for commit in commits %}
 
-            {% djangit_commit_info repo_name commit.id %}
+            {% djangit_commit_info repo_name commit.id link_to_tree=True %}
 
         {% endfor %}
 
