@@ -76,3 +76,7 @@ def djangit_breadcrumb(repo_name, tree):
 @register.inclusion_tag('djangit/includes/breadcrumb.html')
 def djangit_repo_info(repo_name):
     pass
+
+@register.inclusion_tag('djangit/includes/branch_picker.html')
+def djangit_branch_picker(repo_name):
+    pass
