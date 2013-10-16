@@ -23,5 +23,7 @@ urlpatterns = patterns(
     url(r'^(?P<repo_name>[^/]+)/(?P<identifier>[^/]+)$',
         views.show_repo, name='show_repo'),
 
+    url(r'^new_repo/', views.NewRepoView.as_view(), name='new_repo'),
+
     url(r'^$', views.list_repos, name='list_repos'),
 )

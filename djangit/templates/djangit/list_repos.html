@@ -2,15 +2,20 @@
 
 {% block content %}
 
-{% for repo, commit, lastchange, author in repos %}
+<a href="{% url 'djangit:new_repo' %}" class="btn btn-success">New repository</a>
+<hr />
+
+{% for repo, repo_name, commit, lastchange, author in repos %}
 
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
-    <a href="{% url 'djangit:show_repo' repo 'master' %}">{{ repo }}</a>
+    <a href="{% url 'djangit:show_repo' repo_name 'master' %}">{{ repo_name }}</a>
     </h3>
   </div>
   <div class="panel-body">
+    {{ repo.get_description }}
+    <hr />
     {% if commit and author and lastchange %}
        Message: {{ commit.message }}<br />
        Author: {{ author.name }}<br />

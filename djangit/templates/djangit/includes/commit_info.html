@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <span class="pull-right">
+        <span>
             {% if commit.parents %}
                 {{ commit.parents|length }} {% if commit.parents|length > 1 %}parents{% else %}parent{% endif %}
                 {% for parent in commit.parents %}

@@ -1,3 +1,17 @@
+import os
+from time import time
+
+from django.conf import settings
+
+from dulwich.repo import Repo
+from dulwich.objects import Blob, Tree, Commit, parse_timezone
+from dulwich.client import get_transport_and_path
+
+
+def get_repo_path(repo_name):
+    return os.path.join(settings.GIT_REPOS_DIR, '{}.git'.format(repo_name))
+
+
 def seperate_tree_entries(tree, tree_path, repo):
     """ Seperates tree entries
 
@@ -53,3 +67,45 @@ def get_gravatar(email, size):
     gravatar_url += urllib.urlencode({'d': default, 's': str(size)})
 
     return gravatar_url
+
+
+def new_repo(repo_name, description=None, initial_commit=False):
+    """
+    Create a repository at settings.GIT_REPOS_DIR + repo_name + '.git'
+    """
+
+    repo_bare_path = get_repo_path(repo_name)
+
+    os.makedirs(repo_bare_path)
+
+    repo = Repo.create(repo_bare_path)
+
+    # Write the description to the file for the time being:
+    with open(os.path.join(repo_bare_path, 'description'), 'w') as f:
+        if description:
+            f.write(description)
+        else:
+            f.write(repo_name)
+
+    if initial_commit:
+
+        # Since we are creating a bare repo, we have to clone the repository
+        # and then do the commit and then push and then remove the clone.
+
+        readme = Blob.from_string('# {}'.format(repo_name))
+
+        tree = Tree()
+        tree.add('README.md', 0100644, readme.id)
+
+        repo.do_commit(
+            message='Initial commit',
+            tree=tree.id
+        )
+
+        object_store = repo.object_store
+        object_store.add_object(readme)
+        object_store.add_object(tree)
+
+        #repo.refs['refs/heads/master'] = commit.id
+
+    return repo

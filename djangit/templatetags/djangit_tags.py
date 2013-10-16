@@ -4,7 +4,7 @@ from django import template
 from django.conf import settings
 
 from dulwich.repo import Repo
-from djangit.utils import seperate_tree_entries, get_author
+from djangit.utils import seperate_tree_entries, get_author, get_repo_path
 
 register = template.Library()
 
@@ -12,7 +12,7 @@ register = template.Library()
 @register.inclusion_tag('djangit/includes/commit_info.html')
 def djangit_commit_info(repo_name, identifier, link_to_tree=False):
 
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(get_repo_path(repo_name))
 
     if len(identifier) == 40:
         # It's a SHA
@@ -39,7 +39,7 @@ def djangit_tree(repo_name, identifier, path=None, show_readme=True):
 
     context = {}
 
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+    repo = Repo(get_repo_path(repo_name))
 
     # Check if the identifier is 40 chars, if so it must be a sha
     if len(identifier) == 40:

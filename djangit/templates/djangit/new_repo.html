@@ -1,0 +1,18 @@
+{% extends 'djangit/base.html' %}
+
+{% block content %}
+
+    <form action="" method="POST">{% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <button class="btn btn-primary">Create repository</button>
+            </td>
+        </tr>
+    </table>
+
+    </form>
+
+{% endblock %}

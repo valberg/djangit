@@ -20,14 +20,17 @@ import glob
 import os
 import difflib
 from datetime import datetime
+from django.core.urlresolvers import reverse
+from django.views.generic.edit import FormView
 
 from dulwich.repo import Repo, Tree
 from dulwich.walk import Walker
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.conf import settings
-from djangit.utils import get_author
+from djangit.forms import NewRepoForm
+from djangit.utils import get_author, new_repo
 
 
 def list_repos(request):
@@ -59,7 +62,7 @@ def list_repos(request):
                 author = get_author(commit)
                 lastchange = datetime.fromtimestamp(commit.commit_time)
 
-            repos.append((repo_name.group('dir'), commit, lastchange, author))
+            repos.append((repo, repo_name.group('dir'), commit, lastchange, author))
 
     # Sort the repos alphabetically
     repos = sorted(repos, key=lambda repo: repo[0])
@@ -337,3 +340,17 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
         'blob2': blob2,
         'diff': diff_string,
     }, context_instance=RequestContext(request))
+
+
+class NewRepoView(FormView):
+    form_class = NewRepoForm
+    template_name = 'djangit/new_repo.html'
+
+    def form_valid(self, form):
+        repo_name = form.cleaned_data['repo_name']
+        description = form.cleaned_data['description']
+        initial_commit = form.cleaned_data['initial_commit']
+
+        repo = new_repo(repo_name, description=description, initial_commit=initial_commit)
+
+        return redirect(reverse('djangit:list_repos'))
