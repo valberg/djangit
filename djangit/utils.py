@@ -12,7 +12,7 @@ def get_repo_path(repo_name):
     return os.path.join(settings.GIT_REPOS_DIR, '{}.git'.format(repo_name))
 
 
-def seperate_tree_entries(tree, tree_path, repo):
+def seperate_tree_entries(tree, repo, path=None):
     """ Seperates tree entries
 
     Iterates through the tree entries to place trees in one list and blobs in
@@ -23,8 +23,8 @@ def seperate_tree_entries(tree, tree_path, repo):
     blobs = []
 
     for name, mode, sha in tree.iteritems():
-        if tree_path:
-            url = tree_path + '/' + name.decode('utf-8')
+        if path:
+            url = path + '/' + name.decode('utf-8')
         else:
             url = name.decode('utf-8')
 
@@ -36,37 +36,6 @@ def seperate_tree_entries(tree, tree_path, repo):
             blobs.append((mode, name, url, sha))
 
     return trees, blobs
-
-
-def get_author(commit):
-    ms = commit.author.index('<')
-    name = commit.author[:ms].strip(' ')
-    email = commit.author[ms + 1:-1]
-    gravatar = get_gravatar(email, 60)
-
-    author = {
-        'name': name,
-        'email': email,
-        'gravatar': gravatar,
-    }
-
-    return author
-
-
-def get_gravatar(email, size):
-    # import code for encoding urls and generating md5 hashes
-    import urllib
-    import hashlib
-
-    # Set your variables here
-    default = "monsterid"
-
-    # construct the url
-    gravatar_url = "https://secure.gravatar.com/avatar/" + \
-        hashlib.md5(email.lower()).hexdigest() + "?"
-    gravatar_url += urllib.urlencode({'d': default, 's': str(size)})
-
-    return gravatar_url
 
 
 def create_repo(repo_name, description=None, initial_commit=False):

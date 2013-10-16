@@ -1,10 +1,6 @@
-import re
-import glob
-import os
 import difflib
-from datetime import datetime
 from django.core.urlresolvers import reverse
-from django.views.generic.edit import FormView
+from django.views.generic import FormView, ListView, DetailView
 
 from dulwich.repo import Repo, Tree
 from dulwich.walk import Walker
@@ -12,92 +8,38 @@ from dulwich.walk import Walker
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.conf import settings
-from djangit import models
-from djangit.forms import CreateRepoForm
-from djangit.utils import get_author
+
+from . import models, utils, forms
 
 
-def list_repos(request):
-    """ List all repos
+class RepositoryView(DetailView):
+    context_object_name = 'repo'
 
-    Globs for all directories ending in .git in GIT_REPOS_DIR and then runs a
-    regex on the path of each directory to get only the name of the directory.
+    def get_object(self):
+        name = self.kwargs['name']
+        return models.Repository.objects.get(name=name)
 
-    Finally puts each directory in a list, 'repos', which gets sent as context
-    via render_to_response.
-    """
+    def get_context_data(self, **kwargs):
+        context = super(RepositoryView, self).get_context_data(**kwargs)
 
-    repos = []
+        # We always want to send the stuff from the URL to the template
+        context.update(self.kwargs)
 
-    for directory in glob.glob(os.path.join(settings.GIT_REPOS_DIR, '*.git')):
-            repo_name = re.search('(?P<dir>[^/]*)\.git$', directory)
-
-            repo = Repo('{}{}.git'.format(
-                settings.GIT_REPOS_DIR,
-                repo_name.group('dir')
-            ))
-
-            commit = None
-            author = None
-            lastchange = None
-
-            if len(repo.get_refs()) > 0:
-                commit = repo[repo.head()]
-                author = get_author(commit)
-                lastchange = datetime.fromtimestamp(commit.commit_time)
-
-            repos.append((repo, repo_name.group('dir'), commit, lastchange, author))
-
-    # Sort the repos alphabetically
-    repos = sorted(repos, key=lambda repo: repo[0])
-
-    return render_to_response('djangit/list_repos.html',
-                              {'repos': repos},
-                              context_instance=RequestContext(request))
+        return context
 
 
-def show_repo(request, repo_name, identifier):
-    """ Show info about a repo
+class RepositoryDetail(RepositoryView):
+    template_name = 'djangit/show_repo.html'
 
-    Creates a repo object using repo_name, gets the latest commit and
-    corresponding tree and tree entries.
 
-    Procedes onto references of the repo. Currently 'HEAD' isn't used for
-    anything, so this is gently "passed out", and since references are
-    displayed as refs/heads/<name> each reference is split, and only the last
-    part is put into a list, 'refs'.
+class RepositoryShowTree(RepositoryView):
+    template_name = 'djangit/show_tree.html'
 
-    All this is then sent into space with render_to_response, incl. repo_name
-    and identifier which come from the URL.
-    """
 
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
-
-    context = {}
-
-    # References
-    refs = []
-
-    for ref in repo.refs.as_dict():
-        if ref == "HEAD":
-            # Currently we do not use HEAD for anything, might come later.
-            pass
-        else:
-            # We only want the last in ie. refs/heads/master
-            parts = ref.split('/')
-            refs.append(parts[-1])
-
-    context.update({
-        'repo_name': repo_name,
-        'identifier': identifier,
-        'refs': refs,
-    })
-
-    return render_to_response(
-        'djangit/show_repo.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+class RepositoryList(ListView):
+    model = models.Repository
+    template_name = 'djangit/list_repos.html'
+    context_object_name = 'repos'
 
 
 def list_commits(request, repo_name, identifier):
@@ -121,27 +63,6 @@ def list_commits(request, repo_name, identifier):
         'identifier': identifier,
         'commits': commits,
     }, context_instance=RequestContext(request))
-
-
-def show_tree(request, repo_name, identifier, path):
-    """ Show tree
-
-    Creates a repo object from repo_name, checks identifier for if it's a sha
-    value or a normal name, and creates tree object accordingly (might cause
-    problems for reference names with 40 characters, but those are unlikely to
-    exist). Then it finds the corresponding tree entry by iterating till the
-    last part of the path. Runs seperate_tree_entries and in the end
-    render_to_response to show this lovely tree to the world.
-    """
-
-    return render_to_response(
-        'djangit/show_tree.html', {
-            'repo_name': repo_name,
-            'identifier': identifier,
-            'path': path,
-        },
-        context_instance=RequestContext(request)
-    )
 
 
 def show_blob(request, repo_name, identifier, path):
@@ -327,7 +248,7 @@ def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
 
 
 class CreateRepoView(FormView):
-    form_class = CreateRepoForm
+    form_class = forms.CreateRepoForm
     template_name = 'djangit/create_repo.html'
 
     def form_valid(self, form):

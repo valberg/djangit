@@ -3,7 +3,7 @@
         <i class="icon-save"></i>
     </div>
     <div class="last_commit_message">
-        {{ commit.message }}
+        {{ commit.message|truncatewords:15 }}
         {% if link_to_tree %}
             <a href="{% url 'djangit:show_tree' repo_name commit.tree '' %}" class="pull-right">
                 Browse code
