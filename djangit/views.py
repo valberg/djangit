@@ -31,9 +31,13 @@ class RepositoryView(DetailView):
 class RepositoryDetail(RepositoryView):
     template_name = 'djangit/show_repo.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(RepositoryDetail, self).get_context_data(**kwargs)
 
-class RepositoryShowTree(RepositoryView):
-    template_name = 'djangit/show_tree.html'
+        if 'identifier' not in kwargs:
+            context['identifier'] = 'master'
+
+        return context
 
 
 class RepositoryList(ListView):

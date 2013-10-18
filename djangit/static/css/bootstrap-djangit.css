@@ -6028,6 +6028,33 @@ b {
   padding: 3px 8px;
   margin: 0 10px 0 0;
 }
+.branch:hover,
+.branch:active .branch:focus {
+  text-decoration: none !important;
+  color: #fff;
+}
+.branch:visited {
+  color: #fff;
+}
+#refs {
+  list-style-type: none;
+  margin: 15px 0;
+  padding: 0;
+}
+#refs ul {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  display: none;
+  background-color: #16a085;
+  position: absolute;
+}
+#refs ul a {
+  color: #fff;
+}
+#refs li:hover > ul {
+  display: block;
+}
 nav {
   background: #ebebf5 !important;
 }

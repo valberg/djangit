@@ -123,6 +123,39 @@ b {
   color : #fff;
   padding : 3px 8px;
   margin : 0 10px 0 0;
+
+  &:hover, &:active &:focus {
+    text-decoration: none !important;
+    color: #fff;
+  }
+
+  &:visited {
+    color: #fff;
+  }
+
+}
+
+#refs {
+  list-style-type: none;
+  margin: 15px 0;
+  padding: 0;
+
+  ul {
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    display: none;
+    background-color: rgb(22, 160, 133);
+    position: absolute;
+
+    a {
+      color: #fff;
+    }
+  }
+
+  li:hover > ul {
+    display: block;
+  }
 }
 
 nav {

@@ -93,6 +93,11 @@ def djangit_breadcrumb(repo, identifier, path=None):
     :param path: What path to show. If None the root will be shown.
     """
 
+    context = {
+        'repo': repo,
+        'identifier': identifier,
+    }
+
     repo_object = repo.get_repo_object()
 
     if len(identifier) == 40:
@@ -100,11 +105,6 @@ def djangit_breadcrumb(repo, identifier, path=None):
     # else it's just a normal reference name.
     else:
         tree = repo_object[repo_object['refs/heads/' + identifier].tree]
-
-    context = {
-        'repo': repo,
-        'identifier': identifier,
-    }
 
     crumbs = []
 
@@ -121,9 +121,8 @@ def djangit_breadcrumb(repo, identifier, path=None):
 
         link_path = path_template.format(string.join(path_parts[:i], '/'), name)
 
-        print link_path
-
         crumbs.append((name, link_path))
+
 
     context['crumbs'] = crumbs
 
@@ -139,13 +138,22 @@ def djangit_repo_info(repo):
     pass
 
 @register.inclusion_tag('djangit/includes/ref_picker.html')
-def djangit_ref_picker(repo):
+def djangit_ref_picker(repo, identifier, path=None):
     """
     List all references.
 
     :params repo: Model instance for the repo whose references should be shown
+    :params identifier: Identifier of the current ref
+    :params path: Which path to link to.
     """
-    pass
+
+    context = {
+        'repo': repo,
+        'identifier': identifier,
+        'path': path
+    }
+
+    return context
 
 @register.filter
 def djangit_format_author(author):

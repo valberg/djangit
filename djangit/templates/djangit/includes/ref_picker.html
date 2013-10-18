@@ -1,0 +1,19 @@
+<ul id="refs">
+    <li>
+        <a href="#" class="branch standout">{{ identifier }} <i class="icon-caret-down"></i></a>
+        <ul>
+            {% for ref in repo.get_refs %}
+                {% if ref != identifier %}
+                    <li>
+                        {% if path %}
+                            <a href="{% url 'djangit:show_repo' repo.name ref path %}">{{ ref }}</a>
+                        {% else %}
+                            <a href="{% url 'djangit:show_repo' repo.name ref %}">{{ ref }}</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </li>
+</ul>
+

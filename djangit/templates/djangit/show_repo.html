@@ -22,7 +22,13 @@
 
     {% djangit_commit_info repo identifier %}
 
-    {% djangit_breadcrumb repo identifier path=path %}
+    <div class="pull-left">
+        {% djangit_ref_picker repo identifier %}
+    </div>
+
+    <div class="pull-left"">
+        {% djangit_breadcrumb repo identifier path=path %}
+    </div>
 
     {% djangit_tree repo identifier path=path %}
 
