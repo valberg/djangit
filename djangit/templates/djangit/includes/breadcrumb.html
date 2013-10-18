@@ -1,0 +1,13 @@
+<ol class="breadcrumb">
+  {% for crumb_name, crumb_path in crumbs %}
+
+      {% if forloop.first %}
+          <li><a href="{% url 'djangit:show_repo' repo identifier %}">{{ repo.name }}</a></li>
+      {% elif forloop.last %}
+          <li class="active">{{ crumb_name }}</li>
+      {% else %}
+          <li><a href="{% url 'djangit:show_tree' repo identifier crumb_path %}">{{ crumb_name }}</a></li>
+      {% endif %}
+  {% endfor %}
+
+</ol>
