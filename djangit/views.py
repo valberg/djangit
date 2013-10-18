@@ -34,7 +34,7 @@ class RepositoryDetail(RepositoryView):
     def get_context_data(self, **kwargs):
         context = super(RepositoryDetail, self).get_context_data(**kwargs)
 
-        if 'identifier' not in kwargs:
+        if 'identifier' not in self.kwargs:
             context['identifier'] = 'master'
 
         return context
