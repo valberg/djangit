@@ -84,151 +84,50 @@ class RepositoryListCommits(RepositoryView):
         return context
 
 
+class RepositoryShowBlob(RepositoryView):
+    template_name = 'djangit/show_blob.html'
 
-def show_blob(request, repo_name, identifier, path):
-    """ Show blob
-    Creates a repo object, checks if it comes from a normal name or sha value
-    identifier, finds it's way to the right tree (which actually in the end is
-    a blob, so it is quite misleading that we are calling the variable a tree)
-    and then in the end render_to_response to show the world this blobby blob!
+    def get_context_data(self, **kwargs):
 
-    Another quite confusing thing is that when checking out a tree from a SHA,
-    the identifier is of course the tree, and therefore commit is a tree.
-    """
+        context = super(RepositoryShowBlob, self).get_context_data(**kwargs)
 
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
+        identifier = self.kwargs['identifier']
+        path = self.kwargs['path']
 
-    context = {}
+        repo = self.object.get_repo_object()
 
-    if len(identifier) == 40:
-        commit = repo[identifier]
-
-        # Quite a hack, there must be a more elegant way of doing this
-        if commit.__class__ == Tree:
-            tree = repo[commit.id]
+        if len(identifier) == 40:
+            commit = repo[identifier]
+            if type(commit) == Tree:
+                tree = repo[commit.id]
+            else:
+                tree = repo[commit.tree]
         else:
-            tree = repo[commit.tree]
+            tree = repo[repo['refs/heads/' + identifier].tree]
 
-    else:
-        tree = repo[repo['refs/heads/' + identifier].tree]
+        for part in path.split('/'):
+            part = part.encode('utf-8')
+            tree = repo[tree[part][1]]
 
-    for part in path.split('/'):
-        part = part.encode('utf-8')
-        tree = repo[tree[part][1]]
+        filext = path.split('/')[-1].split('.')[-1]
 
-    filext = path.split('/')[-1].split('.')[-1]
+        markdown = False
+        if filext in ['markdown', 'md']:
+            markdown = True
 
-    markdown = False
-    if filext in ['markdown', 'md']:
-        markdown = True
-
-    if markdown:
-        blob = tree
-    else:
-        blob = str(tree).split('\n')
-        context['linecount'] = range(1, len(blob))
-
-    context.update({
-        'repo_name': repo_name,
-        'blob': blob,
-        'markdown': markdown,
-        'tree_path': path
-    })
-
-    return render_to_response(
-        'djangit/show_blob.html',
-        context,
-        context_instance=RequestContext(request)
-    )
-
-
-def make_diffs(changes, repo):
-    """
-    Create diffs for two different commits
-    """
-    diffs = []
-    for change in changes:
-        # change[0] is a tuple with new and old name
-        # change[1] is a tuple with new and old mode
-        # change[2] is a tuple with new and old sha
-
-        # If there is a SHA for the new file, ie. the file hasn't been
-        # deleted, then just go on and get the contents, otherwise set it
-        # to an empty string for comparison
-        new_sha = change[2][0]
-        if new_sha:
-            new_data = repo[new_sha].data.split('\n')
+        if markdown:
+            blob = tree
         else:
-            new_data = ""
+            blob = str(tree).split('\n')
+            context['linecount'] = range(1, len(blob))
 
-        # If there is a SHA for the old file, ie. the file hasn't just been
-        # created, then just go on and get the contents, otherwise set it
-        # to an empty string for comparison
-        old_sha = change[2][1]
-        if old_sha:
-            old_data = repo[old_sha].data.split('\n')
-        else:
-            old_data = ""
+        context.update({
+            'blob': blob,
+            'markdown': markdown,
+            'tree_path': path
+        })
 
-        diff = difflib.unified_diff(
-            old_data,
-            new_data,
-            fromfile=change[0][0],
-            tofile=change[0][1])
-
-        # If the file has just been altered, and not deleted or created,
-        # set the blob name to a string with both new and old name.
-        # Else if it's a new file, that is there is no parent name, then
-        # set the blob name to "New file: <filename>"
-        # Else if it's a deleted file, that is there is no child, then set
-        # the blob name to "Deleted file: <filename>"
-        if change[0][0] and change[0][1]:
-            blob_name = change[0][0] + " -> " + change[0][1]
-        elif not change[0][1]:
-            blob_name = "New file: " + change[0][0]
-        elif not change[0][0]:
-            blob_name = "Deleted file: " + change[0][1]
-
-        diff_string = ''
-        for line in diff:
-            diff_string += line + '\n'
-
-        diffs.append((blob_name, diff_string))
-
-    return diffs
-
-
-def show_blob_diff(request, repo_name, blob1_sha, blob2_sha):
-    ''' Show blob diff's using difflib
-    TODO: this view need some love and understanding
-
-    '''
-    repo = Repo(settings.GIT_REPOS_DIR + repo_name + '.git')
-
-    blob1 = repo[blob1_sha]
-    blob2 = repo[blob2_sha]
-
-    # Check if there already exists a cache of the diff
-    # If so, use that file
-    # To be implemented :P
-
-    # htmldiffer = difflib.HtmlDiff()
-    # diff_html = htmldiffer.make_table(blob1.data.split('\n'),
-    #                                  blob2.data.split('\n'))
-
-    diff = difflib.context_diff(blob2.data.split('\n'),
-                                blob1.data.split('\n'))
-
-    diff_string = ""
-    for line in diff:
-        diff_string += line + '\n'
-
-    return render_to_response('djangit/show_blob_diff.html', {
-        'repo_name': repo_name,
-        'blob1': blob1,
-        'blob2': blob2,
-        'diff': diff_string,
-    }, context_instance=RequestContext(request))
+        return context
 
 
 class CreateRepoView(FormView):

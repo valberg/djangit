@@ -1,6 +1,6 @@
 {% extends 'djangit/base.html' %}
 
-{% block content %}
+{% block djangit_content %}
     {{ blob1.id }} vs {{ blob2.id }}
     <pre id="code" class="prettyprint linenums">{{ diff|linenumbers|linebreaks }}</pre>
 

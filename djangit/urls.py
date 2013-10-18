@@ -11,11 +11,8 @@ urlpatterns = patterns(
     url(r'^(?P<name>[^/]+)/tree/(?P<identifier>[^/]*)/(?P<path>.*)$',
         views.RepositoryShowTree.as_view(), name='show_tree'),
 
-    url(r'^(?P<repo_name>[^/]+)/blob/(?P<identifier>[^/]*)/(?P<path>.*)$',
-        views.show_blob, name='show_blob'),
-
-    url(r'^(?P<repo_name>[^/]+)/blob/(?P<blob1_sha>\w{40}):(?P<blob2_sha>\w{40})$',
-        views.show_blob_diff, name='show_blob_diff'),
+    url(r'^(?P<name>[^/]+)/blob/(?P<identifier>[^/]*)/(?P<path>.*)$',
+        views.RepositoryShowBlob.as_view(), name='show_blob'),
 
     url(r'^(?P<name>[^/]+)/commit/(?P<sha>\w{40})$',
         views.RepositoryShowCommit.as_view(), name='show_commit'),
