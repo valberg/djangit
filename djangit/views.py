@@ -60,7 +60,7 @@ class RepositoryShowCommit(RepositoryView):
             # TODO: !!! Right now we only support single parents !!!
             commit_parent = repo_object[commit.parents[0]]
             changes = object_store.tree_changes(commit.tree, commit_parent.tree)
-            diffs = make_diffs(changes, repo_object)
+            diffs = utils.make_diffs(changes, repo_object)
 
         else:
             diffs = []

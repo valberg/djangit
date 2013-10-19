@@ -1,3 +1,4 @@
+import difflib
 import os
 from time import time
 
@@ -5,7 +6,6 @@ from django.conf import settings
 
 from dulwich.repo import Repo
 from dulwich.objects import Blob, Tree, Commit, parse_timezone
-from dulwich.client import get_transport_and_path
 
 
 def get_repo_path(repo_name):
@@ -78,3 +78,59 @@ def create_repo(repo_name, description=None, initial_commit=False):
         #repo.refs['refs/heads/master'] = commit.id
 
     return repo
+
+
+def make_diffs(changes, repo):
+    """
+    Create diffs for two different commits
+    """
+    diffs = []
+    for change in changes:
+        # change[0] is a tuple with new and old name
+        # change[1] is a tuple with new and old mode
+        # change[2] is a tuple with new and old sha
+
+        # If there is a SHA for the new file, ie. the file hasn't been
+        # deleted, then just go on and get the contents, otherwise set it
+        # to an empty string for comparison
+        new_sha = change[2][0]
+        if new_sha:
+            new_data = repo[new_sha].data.split('\n')
+        else:
+            new_data = ""
+
+        # If there is a SHA for the old file, ie. the file hasn't just been
+        # created, then just go on and get the contents, otherwise set it
+        # to an empty string for comparison
+        old_sha = change[2][1]
+        if old_sha:
+            old_data = repo[old_sha].data.split('\n')
+        else:
+            old_data = ""
+
+        diff = difflib.unified_diff(
+            old_data,
+            new_data,
+            fromfile=change[0][0],
+            tofile=change[0][1])
+
+        # If the file has just been altered, and not deleted or created,
+        # set the blob name to a string with both new and old name.
+        # Else if it's a new file, that is there is no parent name, then
+        # set the blob name to "New file: <filename>"
+        # Else if it's a deleted file, that is there is no child, then set
+        # the blob name to "Deleted file: <filename>"
+        if change[0][0] and change[0][1]:
+            blob_name = change[0][0] + " -> " + change[0][1]
+        elif not change[0][1]:
+            blob_name = "New file: " + change[0][0]
+        elif not change[0][0]:
+            blob_name = "Deleted file: " + change[0][1]
+
+        diff_string = ''
+        for line in diff:
+            diff_string += line + '\n'
+
+        diffs.append((blob_name, diff_string))
+
+    return diffs
