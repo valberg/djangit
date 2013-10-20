@@ -4,21 +4,7 @@
 
 {% block djangit_content %}
 
-    <div class="descriptor">
-        <h1>{{ repo.name }}</h1>
-        <span>
-        {% if repo.description %}
-        {{ repo.description }}
-        {% else %}
-            No description.
-        {% endif %}
-        </span>
-        <div class="activity_display">
-            <ul>
-                <li><b>111</b> commits</li><li><b>1</b> branch</li><li><b>0</b> releases</li><li><b>2</b> contributers</li>
-            </ul>
-        </div>
-    </div>
+    {% djangit_repo_info repo %}
 
     {% djangit_commit_info repo identifier %}
 

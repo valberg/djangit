@@ -137,7 +137,12 @@ def djangit_repo_info(repo):
 
     :param repo: Model instance for the repo that should be shown.
     """
-    pass
+
+    context = {
+        'repo': repo,
+    }
+
+    return context
 
 @register.inclusion_tag('djangit/includes/ref_picker.html')
 def djangit_ref_picker(repo, identifier, path=None):

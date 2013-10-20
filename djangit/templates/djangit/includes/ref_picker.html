@@ -2,7 +2,21 @@
     <li>
         <a href="#" class="branch standout">{{ identifier }} <i class="icon-caret-down"></i></a>
         <ul>
-            {% for ref in repo.get_refs %}
+            <li><strong>Branches</strong></li>
+            {% for ref in repo.get_branches %}
+                {% if ref != identifier %}
+                    <li>
+                        {% if path %}
+                            <a href="{% url 'djangit:show_repo' repo.name ref path %}">{{ ref }}</a>
+                        {% else %}
+                            <a href="{% url 'djangit:show_repo' repo.name ref %}">{{ ref }}</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <li><strong>Tags</strong></li>
+            {% for ref in repo.get_tags %}
                 {% if ref != identifier %}
                     <li>
                         {% if path %}

@@ -47,7 +47,6 @@ class Repository(models.Model):
         if not os.path.exists(utils.get_repo_path(self.name)):
             utils.create_repo(self.name, self.description, initial_commit=initial_commit)
 
-
     def delete(self, using=None):
         """
         Make sure to delete the repository in the filesystem when
@@ -92,19 +91,30 @@ class Repository(models.Model):
         """
         return datetime.fromtimestamp(self.get_latest_commit().commit_time)
 
-    def get_refs(self):
+    def get_branches(self):
         """
-        Return refs for the repository.
+        Return branches for the repository.
         """
-        refs = []
+        branches = []
+        for ref in self.get_repo_object().refs.allkeys():
+            if ref == 'HEAD':
+                continue
 
-        for ref in self.get_repo_object().refs.as_dict():
-            if ref == "HEAD":
-                # Currently we do not use HEAD for anything, might come later.
-                pass
-            else:
-                # We only want the last in ie. refs/heads/master
-                parts = ref.split('/')
-                refs.append(parts[-1])
+            ref_split = ref.split('/')
+            if ref_split[1] == 'heads':
+                branches.append(ref_split[-1])
+        return branches
 
-        return refs
+    def get_tags(self):
+        """
+        Return tags for the repository.
+        """
+        branches = []
+        for ref in self.get_repo_object().refs.allkeys():
+            if ref == 'HEAD':
+                continue
+
+            ref_split = ref.split('/')
+            if ref_split[1] == 'tags':
+                branches.append(ref_split[2])
+        return branches

@@ -1,0 +1,15 @@
+<div class="descriptor">
+    <h1>{{ repo.name }}</h1>
+        <span>
+        {% if repo.description %}
+            {{ repo.description }}
+        {% else %}
+            No description.
+        {% endif %}
+        </span>
+    <div class="activity_display">
+        <ul>
+            <li><b>111</b> commits</li><li><b>{{ repo.get_branches|length }}</b> {% if repo_get_branches|length > 1 %}branches{% else %}branch{% endif %}</li><li><b>0</b> releases</li><li><b>2</b> contributers</li>
+        </ul>
+    </div>
+</div>
