@@ -24,7 +24,7 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
     repo_object = repo.get_repo_object()
 
     try:
-        commit = utils.get_commit_or_tree(repo_object, identifier)
+        commit = utils.get_commit(repo_object, identifier)
         commit_time = datetime.fromtimestamp(commit.commit_time)
     except KeyError:
         commit = None
@@ -54,7 +54,11 @@ def djangit_tree(repo, identifier, path=None, show_readme=True):
     repo_object = repo.get_repo_object()
 
     try:
-        tree = utils.get_commit_or_tree(repo_object, identifier)
+        try:
+            tree = repo_object[utils.get_commit(repo_object, identifier).tree]
+        except AttributeError:
+            tree = repo_object[utils.get_commit(repo_object, identifier).id]
+
         if path:
             for part in path.split('/'):
                 tree = repo_object[tree[part][1]]
@@ -88,7 +92,7 @@ def djangit_breadcrumb(repo, identifier, path=None):
     Show a breadcrumb for the current location in the tree.
 
     :param repo: Which repository.
-    :param tree: The tree to show.
+    :param identifier: Identifier for the ref.
     :param path: What path to show. If None the root will be shown.
     """
 
@@ -100,7 +104,7 @@ def djangit_breadcrumb(repo, identifier, path=None):
     repo_object = repo.get_repo_object()
 
     try:
-        tree = utils.get_commit_or_tree(repo_object, identifier)
+        tree = utils.get_commit(repo_object, identifier)
     except KeyError:
         tree = None
 

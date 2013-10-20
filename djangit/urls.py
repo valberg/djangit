@@ -11,22 +11,20 @@ urlpatterns = patterns(
     url(r'^(?P<name>[^/]+)/commits/(?P<identifier>[^/]*)/$',
         views.RepositoryListCommits.as_view(), name='list_commits'),
 
-
     url(r'^(?P<name>[^/]+)/blob/(?P<identifier>[^/]*)/(?P<path>.*)$',
         views.RepositoryShowBlob.as_view(), name='show_blob'),
 
-    url(r'^(?P<name>[^/]+)/commit/(?P<sha>\w{40})/$',
+    url(r'^(?P<name>[^/]+)/commit/(?P<identifier>\w{40})/$',
         views.RepositoryShowCommit.as_view(), name='show_commit'),
 
     url(r'^(?P<name>[^/]+)/tree/(?P<identifier>[^/]*)/(?P<path>.*)$',
-        views.RepositoryDetail.as_view(), name='show_tree'),
+        views.RepositoryShowTree.as_view(), name='show_tree'),
 
     url(r'^(?P<name>[^/]+)/(?P<identifier>[^/]+)/$',
         views.RepositoryDetail.as_view(), name='show_repo'),
 
     url(r'^(?P<name>[^/]+)/$',
         views.RepositoryDetail.as_view(), name='show_repo'),
-
 
     url(r'^$',
         views.RepositoryList.as_view(), name='list_repos'),

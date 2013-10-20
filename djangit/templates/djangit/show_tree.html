@@ -1,0 +1,21 @@
+{% extends "djangit/base.html" %}
+{% load markup %}
+{% load djangit_tags %}
+
+{% block djangit_content %}
+
+    {% djangit_commit_info repo latest_commit_for_tree %}
+
+    <div class="pull-left">
+        {% djangit_ref_picker repo identifier %}
+    </div>
+
+    <div class="pull-left">
+        {% djangit_breadcrumb repo identifier path=path %}
+    </div>
+
+    <div class="clearfix"></div>
+
+    {% djangit_tree repo identifier path=path %}
+
+{% endblock %}

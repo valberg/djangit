@@ -1,43 +1,12 @@
-import difflib
 from django.core.urlresolvers import reverse
 from django.views.generic import FormView, ListView, DetailView
 
-from dulwich.repo import Repo, Tree
+from dulwich.repo import Tree
 from dulwich.walk import Walker
 
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
-from django.conf import settings
+from django.shortcuts import redirect
 
 from . import models, utils, forms
-
-
-class RepositoryView(DetailView):
-    context_object_name = 'repo'
-
-    def get_object(self):
-        name = self.kwargs['name']
-        return models.Repository.objects.get(name=name)
-
-    def get_context_data(self, **kwargs):
-        context = super(RepositoryView, self).get_context_data(**kwargs)
-
-        # We always want to send the stuff from the URL to the template
-        context.update(self.kwargs)
-
-        return context
-
-
-class RepositoryDetail(RepositoryView):
-    template_name = 'djangit/show_repo.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(RepositoryDetail, self).get_context_data(**kwargs)
-
-        if 'identifier' not in self.kwargs:
-            context['identifier'] = 'master'
-
-        return context
 
 
 class RepositoryList(ListView):
@@ -46,15 +15,61 @@ class RepositoryList(ListView):
     context_object_name = 'repos'
 
 
-class RepositoryShowCommit(RepositoryView):
+class RepositoryMixin(object):
+    context_object_name = 'repo'
+
+    def get_object(self):
+        name = self.kwargs['name']
+        return models.Repository.objects.get(name=name)
+
+
+class RepositoryDetail(RepositoryMixin, DetailView):
+    template_name = 'djangit/show_repo.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RepositoryDetail, self).get_context_data(**kwargs)
+        context.update(self.kwargs)
+
+        if 'identifier' not in context:
+            # TODO: What ref is shown by default should be a field on the Repository model instance
+            context['identifier'] = 'master'
+
+        return context
+
+
+class RepositoryShowTree(RepositoryMixin, DetailView):
+    template_name = 'djangit/show_tree.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RepositoryShowTree, self).get_context_data(**kwargs)
+        context.update(self.kwargs)
+
+        repo_object = self.object.get_repo_object()
+
+        if 'path' not in self.kwargs:
+            path = '/'
+        else:
+            path = self.kwargs['path']
+
+        context['latest_commit_for_tree'] = utils.get_latest_commit_for_tree(
+            repo_object,
+            self.kwargs['identifier'],
+            paths=[path]
+        )
+
+        return context
+
+
+class RepositoryShowCommit(RepositoryMixin, DetailView):
     template_name = 'djangit/show_commit.html'
 
     def get_context_data(self, **kwargs):
         context = super(RepositoryShowCommit, self).get_context_data(**kwargs)
+        context.update(self.kwargs)
 
         repo_object = self.object.get_repo_object()
         object_store = repo_object.object_store
-        commit = repo_object[self.kwargs['sha']]
+        commit = utils.get_commit(repo_object, self.kwargs['identifier'])
 
         if commit.parents:
             # TODO: !!! Right now we only support single parents !!!
@@ -73,11 +88,12 @@ class RepositoryShowCommit(RepositoryView):
         return context
 
 
-class RepositoryListCommits(RepositoryView):
+class RepositoryListCommits(RepositoryMixin, DetailView):
     template_name = 'djangit/list_commits.html'
 
     def get_context_data(self, **kwargs):
         context = super(RepositoryListCommits, self).get_context_data(**kwargs)
+        context.update(self.kwargs)
 
         repo_object = self.object.get_repo_object()
 
@@ -90,12 +106,12 @@ class RepositoryListCommits(RepositoryView):
         return context
 
 
-class RepositoryShowBlob(RepositoryView):
+class RepositoryShowBlob(RepositoryMixin, DetailView):
     template_name = 'djangit/show_blob.html'
 
     def get_context_data(self, **kwargs):
-
         context = super(RepositoryShowBlob, self).get_context_data(**kwargs)
+        context.update(self.kwargs)
 
         identifier = self.kwargs['identifier']
         path = self.kwargs['path']
