@@ -8,11 +8,15 @@
 
     <div id="git-log">
 
-        {% for commit in commits %}
+        {% if commits %}
+            {% for commit in commits %}
 
-            {% djangit_commit_info repo commit.id link_to_tree=True %}
+                {% djangit_commit_info repo commit.id link_to_tree=True %}
 
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            No commits.
+        {% endif %}
 
     </div>
 

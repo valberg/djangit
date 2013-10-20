@@ -23,14 +23,12 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
 
     repo_object = repo.get_repo_object()
 
-    if len(identifier) == 40:
-        # It's a SHA
-        commit = repo_object[identifier]
-    else:
-        # It's probably not a SHA
-        commit = repo_object[repo_object.ref('refs/heads/' + identifier)]
-
-    commit_time = datetime.fromtimestamp(commit.commit_time)
+    try:
+        commit = utils.get_commit_or_tree(repo_object, identifier)
+        commit_time = datetime.fromtimestamp(commit.commit_time)
+    except KeyError:
+        commit = None
+        commit_time = None
 
     return {
         'commit': commit,
@@ -55,26 +53,27 @@ def djangit_tree(repo, identifier, path=None, show_readme=True):
     context = {}
     repo_object = repo.get_repo_object()
 
-    # Check if the identifier is 40 chars, if so it must be a sha
-    if len(identifier) == 40:
-        tree = repo_object[identifier]
-    # else it's just a normal reference name.
-    else:
-        tree = repo_object[repo_object['refs/heads/' + identifier].tree]
+    try:
+        tree = utils.get_commit_or_tree(repo_object, identifier)
+        if path:
+            for part in path.split('/'):
+                tree = repo_object[tree[part][1]]
 
-    if path:
-        for part in path.split('/'):
-            tree = repo_object[tree[part][1]]
+        if show_readme:
+            if 'README.markdown' in tree:
+                context['readme'] = repo_object[tree['README.markdown'][1]]
+            elif 'README.md' in tree:
+                context['readme'] = repo_object[tree['README.md'][1]]
 
-    if show_readme:
-        if 'README.markdown' in tree:
-            context['readme'] = repo_object[tree['README.markdown'][1]]
-        elif 'README.md' in tree:
-            context['readme'] = repo_object[tree['README.md'][1]]
-
-    trees, blobs = utils.seperate_tree_entries(tree, repo_object, path=path)
+        trees, blobs = utils.seperate_tree_entries(tree, repo_object, path=path)
+        no_tree = False
+    except KeyError:
+        trees = None
+        blobs = None
+        no_tree = True
 
     context.update({
+        'no_tree': no_tree,
         'trees': trees,
         'blobs': blobs,
         'repo_name': repo.name,
@@ -100,31 +99,30 @@ def djangit_breadcrumb(repo, identifier, path=None):
 
     repo_object = repo.get_repo_object()
 
-    if len(identifier) == 40:
-        tree = repo_object[identifier]
-    # else it's just a normal reference name.
-    else:
-        tree = repo_object[repo_object['refs/heads/' + identifier].tree]
+    try:
+        tree = utils.get_commit_or_tree(repo_object, identifier)
+    except KeyError:
+        tree = None
 
-    crumbs = []
+    if tree:
+        crumbs = []
 
-    path_parts = path.split('/')
+        path_parts = path.split('/')
 
-    for i in range(len(path_parts)):
-        name = path_parts[i]
+        for i in range(len(path_parts)):
+            name = path_parts[i]
 
-        # TODO: This is somewhat hackish.
-        if i == 0:
-            path_template = '{}{}'
-        else:
-            path_template = '{}/{}'
+            # TODO: This is somewhat hackish.
+            if i == 0:
+                path_template = '{}{}'
+            else:
+                path_template = '{}/{}'
 
-        link_path = path_template.format(string.join(path_parts[:i], '/'), name)
+            link_path = path_template.format(string.join(path_parts[:i], '/'), name)
 
-        crumbs.append((name, link_path))
+            crumbs.append((name, link_path))
 
-
-    context['crumbs'] = crumbs
+        context['crumbs'] = crumbs
 
     return context
 

@@ -5,6 +5,9 @@ from . import views
 urlpatterns = patterns(
     '',
 
+    url(r'^create_repo/',
+        views.CreateRepoView.as_view(), name='create_repo'),
+
     url(r'^(?P<name>[^/]+)/commits/(?P<identifier>[^/]*)/$',
         views.RepositoryListCommits.as_view(), name='list_commits'),
 
@@ -24,8 +27,6 @@ urlpatterns = patterns(
     url(r'^(?P<name>[^/]+)/$',
         views.RepositoryDetail.as_view(), name='show_repo'),
 
-    url(r'^create_repo/',
-        views.CreateRepoView.as_view(), name='create_repo'),
 
     url(r'^$',
         views.RepositoryList.as_view(), name='list_repos'),

@@ -134,3 +134,20 @@ def make_diffs(changes, repo):
         diffs.append((blob_name, diff_string))
 
     return diffs
+
+
+def get_commit_or_tree(repo_object, identifier):
+    """
+    Get a commit or tree.
+
+    :param repo_object: The repo object to get the commit from.
+    :param identifier: Either a SHA or a reference name.
+    """
+    if len(identifier) == 40:
+        # It's a SHA
+        commit_or_tree = repo_object[identifier]
+    else:
+        # It's probably not a SHA
+        commit_or_tree = repo_object[repo_object.ref('refs/heads/' + identifier)]
+
+    return commit_or_tree

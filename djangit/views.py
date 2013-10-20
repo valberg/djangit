@@ -81,9 +81,11 @@ class RepositoryListCommits(RepositoryView):
 
         repo_object = self.object.get_repo_object()
 
-        walker = Walker(repo_object, [repo_object.head()])
-
-        context['commits'] = [commit.commit for commit in walker]
+        try:
+            walker = Walker(repo_object, [repo_object.head()])
+            context['commits'] = [commit.commit for commit in walker]
+        except KeyError:
+            pass
 
         return context
 

@@ -3,13 +3,19 @@
         <i class="icon-save"></i>
     </div>
     <div class="last_commit_message">
-        {{ commit.message|truncatewords:15 }}
-        {% if link_to_tree %}
-            <a href="{% url 'djangit:show_tree' repo_name commit.tree '' %}" class="pull-right">
-                Browse code
-            </a>
+        {% if commit %}
+            {{ commit.message|truncatewords:15 }}
+            {% if link_to_tree %}
+                <a href="{% url 'djangit:show_tree' repo_name commit.tree '' %}" class="pull-right">
+                    Browse code
+                </a>
+            {% endif %}
+        {% else %}
+            No commit.
         {% endif %}
     </div>
+
+    {% if commit %}
     <div class="last_commit_user">
         <i class="icon-user"></i> <span class="name">{{ author.name }}</span> commited {{ commit_time|timesince }} ago
 
@@ -24,38 +30,5 @@
             <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id|truncatechars:10 }}</a><br />
         </span>
     </div>
+    {% endif %}
 </section>
-
-{% comment %}
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">{{ commit.message }}
-        </h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="media pull-left">
-            <a class="pull-left" href="#">
-                <img src="{{author.gravatar}}" width="60" height="60" class="img-rounded media-object" />
-            </a>
-
-            <div class="media-body">
-                <h4 class="media-heading">{{ author.name }}</h4>
-                {{ commit_time|timesince }} ago
-            </div>
-        </div>
-
-        <span>
-            {% if commit.parents %}
-                {{ commit.parents|length }} {% if commit.parents|length > 1 %}parents{% else %}parent{% endif %}
-                {% for parent in commit.parents %}
-                    <a href="{% url 'djangit:show_commit' repo_name parent %}" class="sha">{{ parent|truncatechars:10 }}</a><br />
-                {% endfor %}
-            {% endif %}
-
-            <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id|truncatechars:10 }}</a><br />
-        </span>
-    </div>
-</div>
-
-{% endcomment %}
