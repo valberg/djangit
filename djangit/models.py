@@ -2,7 +2,6 @@ from datetime import datetime
 import os
 import shutil
 from django.db import models
-from django.utils import timezone
 
 from dulwich.repo import Repo
 
@@ -72,7 +71,6 @@ class Repository(models.Model):
         """
         return len(self.get_repo_object().get_refs()) > 0
 
-
     def get_latest_commit(self):
         """
         Get the latest commit for the repository.
@@ -83,7 +81,6 @@ class Repository(models.Model):
         # branch and get the latest commit for that branch.
 
         return repo[repo.head()]
-
 
     def get_latest_commit_time(self):
         """

@@ -5,3 +5,7 @@
 gitolite-admin
 database.db
 _build/
+djangit.egg-info/
+.vagrant/
+.python-version
+*.sqlite3

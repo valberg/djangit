@@ -1,0 +1,19 @@
+---
+- hosts: all
+  remote_user: vagrant
+  sudo: yes
+  tasks:
+  - apt: update_cache=yes upgrade=full
+
+  - apt: name={{item}} state=latest
+    with_items:
+      - python-dev
+      - python-pip
+      - gitolite3
+
+  - pip: chdir=/vagrant
+         requirements=/vagrant/dev_requirements.txt
+
+  - django_manage: app_path=/vagrant/djangit_project/
+                   command=migrate
+
