@@ -154,8 +154,11 @@ def get_commit(repo_object, identifier):
         # It's a SHA
         commit = repo_object[identifier]
     else:
-        # It's probably not a SHA
-        commit = repo_object[repo_object.ref('refs/heads/' + identifier)]
+        try:
+            # It's probably not a SHA
+            commit = repo_object[repo_object.ref('refs/heads/' + identifier)]
+        except AttributeError:
+            commit = None
 
     return commit
 

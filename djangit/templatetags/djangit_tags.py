@@ -25,7 +25,9 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
 
     try:
         commit = utils.get_commit(repo_object, identifier)
-        commit_time = datetime.fromtimestamp(commit.commit_time)
+        commit_time = None
+        if commit:
+            commit_time = datetime.fromtimestamp(commit.commit_time)
     except KeyError:
         commit = None
         commit_time = None
@@ -53,24 +55,34 @@ def djangit_tree(repo, identifier, path=None, show_readme=True):
     context = {}
     repo_object = repo.get_repo_object()
 
+    no_tree = True
+    trees = None
+    blobs = None
+
     try:
         try:
             tree = repo_object[utils.get_commit(repo_object, identifier).tree]
         except AttributeError:
-            tree = repo_object[utils.get_commit(repo_object, identifier).id]
+            try:
+                tree = repo_object[utils.get_commit(repo_object, identifier).id]
+            except AttributeError:
+                tree = None
 
-        if path:
-            for part in path.split('/'):
-                tree = repo_object[tree[part][1]]
+        if tree:
+            if path:
+                for part in path.split('/'):
+                    tree = repo_object[tree[part][1]]
 
-        if show_readme:
-            if 'README.markdown' in tree:
-                context['readme'] = repo_object[tree['README.markdown'][1]]
-            elif 'README.md' in tree:
-                context['readme'] = repo_object[tree['README.md'][1]]
+            if show_readme:
+                if 'README.markdown' in tree:
+                    context['readme'] = repo_object[tree['README.markdown'][1]]
+                elif 'README.md' in tree:
+                    context['readme'] = repo_object[tree['README.md'][1]]
 
-        trees, blobs = utils.seperate_tree_entries(tree, repo_object, path=path)
-        no_tree = False
+            no_tree = False
+            trees, blobs = utils.seperate_tree_entries(
+                tree, repo_object, path=path)
+
     except KeyError:
         trees = None
         blobs = None

@@ -12,3 +12,4 @@ djangit.egg-info/
 *.scssc
 djangit_project/static
 djangit/static/css/bootstrap-djangit.css.map
+djangit/static/css/bootstrap-djangit.css
