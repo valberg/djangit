@@ -1,0 +1,4 @@
+-r requirements_base.txt
+invoke==0.9.0
+ansible==1.8
+-e .

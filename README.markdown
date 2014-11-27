@@ -36,14 +36,57 @@ Add this to your `INSTALLED_APPS` in settings.py:
 We need a license!
 
 # Hacking
-First of, install the required python packages:
 
-    pip install -r dev_requirements.txt
+## Requirements
 
-## CSS
+- [Vagrant](http://vagrantup.com) *
+- [Ansible](http://docs.ansible.com/) *
+- [SASS](http://sass-lang.com/) (for compiling .scss to .css)
+
+\* Hard requirement
+
+## Setup
+
+For starters, install the requirements (at least the ones marked as hard requirements) listed above.
+
+When that is done, install the required python packages in a virtual environment:
+
+    pip install -r requirements_dev.txt
+
+Next, run:
+
+    inv up
+
+This will create a new Vagrant instance and provision it using Ansible.
+
+**Note**: This can take some time, depending on your internet connection,
+since a Ubuntu 14.04 base box needs to be downloaded and then upgraded
+via Ansible.
+
+You should now be ready to hack on Djangit!
+
+*If anything doesn't work, please create an issue*
+
+## Tasks
+
+Djangit uses [Invoke](http://pyinvoke.org) to run tasks associated with development. Each task is runnable using `inv <taskname>`.
+
+### Start
+To both start the vagrant box (provision if needed) and then run Djangos `runserver` use `inv start`.
+
+This command is comprised of two other commands `up` and `serve`. So, to only start the vagrant box run `inv up`, and to only run the development server (requires a running vagrant box) run `inv serve`.
+
+To access the running development version of Djangit use: [http://localhost:9001](http://localhost:9001)
+
+### Manage
+If you need to interact with `manage.py`, you can use `inv manage <cmd>` where `<cmd>` is the management command you wish to run. If you need to pass flags as well, put your command in quotes, i.e. `inv manage 'flush --noinput'`.
+
+**Note**: Running commands that require input is a quite dodgy, so commands like `shell` and `dbshell` only display input when pressing enter.
+
+### CSS
 Djangit uses Bootstrap and Font Awesome for a beautiful look.
 
-Thus all styles are written in LESS and need to be compiled into CSS. Run this
+Thus all styles are written in SASS and need to be compiled into CSS. Run this
 command in the root directory to compile it:
 
-    invoke compile_bootstrap
+    inv css

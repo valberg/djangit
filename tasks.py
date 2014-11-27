@@ -1,10 +1,39 @@
 from invoke import run, task
 
+SSH_EXEC = "vagrant ssh -c '{}'"
 
 @task
-def compile_bootstrap():
+def css():
+    print('# Compiling bootstrap')
     run(
-        "lessc bootstrap_less/bootstrap.less djangit/static/css/bootstrap-djangit.css;"
+        'sass bootstrap_djangit/bootstrap.scss\
+         djangit/static/css/bootstrap-djangit.css'
     )
 
-    print("Done.")
+
+@task
+def manage(cmd):
+    """ Run arbitrary manage.py commands """
+    manage_command = 'python /vagrant/djangit_project/manage.py {}'.format(cmd)
+    run(SSH_EXEC.format(manage_command))
+
+
+@task
+def up(provision=False):
+    cmd = 'vagrant up'
+    if provision:
+        cmd += ' --provision'
+    print('# Running `{}`'.format(cmd))
+    run(cmd)
+
+
+@task
+def serve():
+    print('# Running development server')
+    manage('runserver 0.0.0.0:8000')
+
+
+@task
+def start():
+    up()
+    serve()

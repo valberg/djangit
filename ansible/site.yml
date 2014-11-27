@@ -10,10 +10,13 @@
       - python-dev
       - python-pip
       - gitolite3
+      - sqlite3
 
   - pip: chdir=/vagrant
-         requirements=/vagrant/dev_requirements.txt
+         requirements=/vagrant/requirements_dev.txt
+
+  - command: gitolite setup -a djangit
+    sudo_user: vagrant
 
   - django_manage: app_path=/vagrant/djangit_project/
                    command=migrate
-

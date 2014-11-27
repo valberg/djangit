@@ -9,3 +9,6 @@ djangit.egg-info/
 .vagrant/
 .python-version
 *.sqlite3
+*.scssc
+djangit_project/static
+djangit/static/css/bootstrap-djangit.css.map

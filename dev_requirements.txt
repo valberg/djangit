@@ -1,3 +1,0 @@
--r requirements.txt
-invoke==0.5.1
--e .
