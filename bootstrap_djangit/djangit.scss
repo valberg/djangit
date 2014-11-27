@@ -1,8 +1,7 @@
-// Djangit LESS file
-
 // Overwrite some bootstrap variables:
-$container-lg-desktop: 940px + $grid-gutter-width;
+$container-large-desktop: ((900px));
 
+@import "bootstrap";
 
 @font-face {
   font-family: 'OpenSans Regular';

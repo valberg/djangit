@@ -6,7 +6,7 @@ SSH_EXEC = "vagrant ssh -c '{}'"
 def css():
     print('# Compiling bootstrap')
     run(
-        'sass bootstrap_djangit/bootstrap.scss\
+        'sass bootstrap_djangit/djangit.scss\
          djangit/static/css/bootstrap-djangit.css'
     )
 
@@ -36,4 +36,5 @@ def serve():
 @task
 def start():
     up()
+    css()
     serve()
