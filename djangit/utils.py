@@ -75,7 +75,8 @@ def create_repo(repo_name, description=None, initial_commit=False):
 
         repo.do_commit(
             message='Initial commit',
-            tree=tree.id
+            tree=tree.id,
+            committer='Djangit'
         )
 
         object_store = repo.object_store
@@ -154,11 +155,8 @@ def get_commit(repo_object, identifier):
         # It's a SHA
         commit = repo_object[identifier]
     else:
-        try:
-            # It's probably not a SHA
-            commit = repo_object[repo_object.ref('refs/heads/' + identifier)]
-        except AttributeError:
-            commit = None
+        # It's probably not a SHA
+        commit = repo_object[repo_object.get_peeled('refs/heads/' + identifier)]
 
     return commit
 

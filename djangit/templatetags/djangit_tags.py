@@ -23,6 +23,8 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
 
     repo_object = repo.get_repo_object()
 
+    print(utils.get_commit(repo_object, identifier))
+
     try:
         commit = utils.get_commit(repo_object, identifier)
         commit_time = None
@@ -179,13 +181,18 @@ def djangit_format_author(author):
     """
     Get name and email from a string like this: "Name <email>"
     """
+    name = 'Unknown'
+    email = 'Unknown'
+
     if len(author) > 0:
-        ms = author.index('<')
-        name = author[:ms].strip(' ')
-        email = author[ms + 1:-1]
-    else:
-        name = 'Unknown'
-        email = 'Unknown'
+        try:
+            ms = author.index('<')
+            name = author[:ms].strip(' ')
+            email = author[ms + 1:-1]
+        except ValueError:
+            if author == 'Djangit':
+                name = author
+                email = ''
 
     author = {
         'name': name,

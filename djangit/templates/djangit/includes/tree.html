@@ -32,6 +32,6 @@
 
     {% if readme %}
         <hr />
-        {{ readme|commonmark }}
+        {{ readme|commonmark|safe }}
     {% endif %}
 {% endif %}

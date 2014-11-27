@@ -4,9 +4,9 @@ import CommonMark
 
 register = template.Library()
 
-@register.filter
+@register.filter()
 def commonmark(value):
     parser = CommonMark.DocParser()
     renderer = CommonMark.HTMLRenderer()
-    ast = parser.parse(value)
+    ast = parser.parse(value.data)
     return renderer.render(ast)
