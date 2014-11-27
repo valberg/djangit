@@ -16,7 +16,7 @@
     <hr />
 
     {% if markdown %}
-        {{ blob|commonmark }}
+        {{ blob|commonmark|safe }}
     {% else %}
         <pre class="prettyprint">
             <table class="codetable">

@@ -153,7 +153,7 @@ def get_commit(repo_object, identifier):
     """
     if len(identifier) == 40:
         # It's a SHA
-        commit = repo_object[identifier]
+        commit = repo_object[bytes(identifier)]
     else:
         # It's probably not a SHA
         commit = repo_object[repo_object.get_peeled('refs/heads/' + identifier)]

@@ -125,7 +125,8 @@ class RepositoryShowBlob(RepositoryMixin, DetailView):
             else:
                 tree = repo[commit.tree]
         else:
-            tree = repo[repo['refs/heads/' + identifier].tree]
+            # TODO: This could be more explicit - like, what is going on!?
+            tree = repo[repo[repo.get_peeled('refs/heads/' + identifier)].tree]
 
         for part in path.split('/'):
             part = part.encode('utf-8')
