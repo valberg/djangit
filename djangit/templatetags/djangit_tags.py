@@ -23,8 +23,6 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
 
     repo_object = repo.get_repo_object()
 
-    print(utils.get_commit(repo_object, identifier))
-
     try:
         commit = utils.get_commit(repo_object, identifier)
         commit_time = None
