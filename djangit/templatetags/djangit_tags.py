@@ -36,6 +36,7 @@ def djangit_commit_info(repo, identifier, link_to_tree=False,
     return {
         'commit': commit,
         'commit_time': commit_time,
+        'author': commit.author,
         'link_to_tree': link_to_tree,
         'repo_name': repo.name,
         'include_parent': include_parent,
