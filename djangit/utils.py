@@ -1,5 +1,6 @@
 import difflib
 import os
+from datetime import datetime
 
 from django.conf import settings
 
@@ -31,12 +32,18 @@ def seperate_tree_entries(tree, repo, path=None):
         else:
             url = name.decode('utf-8')
 
+        commit = next(iter(repo.get_walker(paths=[url]))).commit
+        commit_time = datetime.fromtimestamp(commit.author_time)
+        commit_message = commit.message
+
+        entry_data = (mode, name, url, sha, commit_time, commit_message)
+
         entry = repo.get_object(sha)
 
-        if entry.type_num == 2:
-            trees.append((mode, name, url, sha))
-        elif entry.type_num == 3:
-            blobs.append((mode, name, url, sha))
+        if entry.type_name == 'tree':
+            trees.append(entry_data)
+        elif entry.type_name == 'blob':
+            blobs.append(entry_data)
 
     return trees, blobs
 

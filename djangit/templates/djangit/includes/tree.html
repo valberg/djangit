@@ -5,33 +5,38 @@
 {% else %}
     <table>
       <tbody>
-
         {% if trees %}
-            {% for mode, name, location, sha in trees %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'djangit:show_tree' repo_name identifier location %}">
-                                <i class="icon-folder-close"></i>
-                                {{ name }}
-                            </a>
+          {% for mode, name, location, sha, commit_time, commit_message in trees %}
+            <tr>
+              <td>
+                <a href="{% url 'djangit:show_tree' repo_name identifier location %}">
+                  <i class="icon-folder-close"></i> {{ name }}
+                </a>
+              <td>
+                {{ commit_message }}
+              <td>
+                {{ commit_time|timesince }}
             {% endfor %}
         <br />
         {% endif %}
 
         {% if blobs %}
-                {% for mode, name, location, sha in blobs %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'djangit:show_blob' repo_name identifier location %}">
-                                    <i class="icon-file"></i>
-                                    {{ name }}
-                                </a>
-                {% endfor %}
+          {% for mode, name, location, sha, commit_time, commit_message in blobs %}
+            <tr>
+              <td>
+                <a href="{% url 'djangit:show_blob' repo_name identifier location %}">
+                  <i class="icon-file"></i> {{ name }}
+                </a>
+              <td>
+                {{ commit_message }}
+              <td>
+                {{ commit_time|timesince }}
+              {% endfor %}
         {% endif %}
     </table>
 
     {% if readme %}
-        <hr />
-        {{ readme|commonmark|safe }}
+      <hr />
+      {{ readme|commonmark|safe }}
     {% endif %}
 {% endif %}
