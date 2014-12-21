@@ -76,7 +76,7 @@ To both start the vagrant box (provision if needed) and then run Djangos `runser
 
 This command is comprised of two other commands `up` and `serve`. So, to only start the vagrant box run `inv up`, and to only run the development server (requires a running vagrant box) run `inv serve`.
 
-To access the running development version of Djangit use: [http://localhost:9001](http://localhost:9001)
+To access the running development version of Djangit use: [http://localhost:8000](http://localhost:8000)
 
 ### Manage
 If you need to interact with `manage.py`, you can use `inv manage <cmd>` where `<cmd>` is the management command you wish to run. If you need to pass flags as well, put your command in quotes, i.e. `inv manage 'flush --noinput'`.
