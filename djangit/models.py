@@ -115,3 +115,9 @@ class Repository(models.Model):
             if ref_split[1] == 'tags':
                 branches.append(ref_split[2])
         return branches
+
+    def get_number_of_commits(self):
+        """
+        Return the number of commits in this repo
+        """
+        return len([_ for _ in self.get_repo_object().get_walker()])
