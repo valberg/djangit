@@ -20,11 +20,13 @@
         <i class="icon-user"></i> <span class="name">{{ author.name }}</span> commited {{ commit_time|timesince }} ago
 
         <span class="pull-right">
-            {% if commit.parents %}
-                {{ commit.parents|length }} {% if commit.parents|length > 1 %}parents{% else %}parent{% endif %}
-                {% for parent in commit.parents %}
-                    <a href="{% url 'djangit:show_commit' repo_name parent %}" class="sha">{{ parent|truncatechars:10 }}</a><br />
-                {% endfor %}
+            {% if include_parents %}
+              {% if commit.parents %}
+                  {{ commit.parents|length }} {% if commit.parents|length > 1 %}parents{% else %}parent{% endif %}
+                  {% for parent in commit.parents %}
+                      <a href="{% url 'djangit:show_commit' repo_name parent %}" class="sha">{{ parent|truncatechars:10 }}</a><br />
+                  {% endfor %}
+              {% endif %}
             {% endif %}
 
             <a href="{% url 'djangit:show_commit' repo_name commit.id %}" class="sha">{{ commit.id|truncatechars:10 }}</a><br />

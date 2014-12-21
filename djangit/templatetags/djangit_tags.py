@@ -11,7 +11,8 @@ register = template.Library()
 
 
 @register.inclusion_tag('djangit/includes/commit_info.html')
-def djangit_commit_info(repo, identifier, link_to_tree=False):
+def djangit_commit_info(repo, identifier, link_to_tree=False,
+                        include_parent=False):
     """
     Show info about a commit.
 
@@ -37,6 +38,7 @@ def djangit_commit_info(repo, identifier, link_to_tree=False):
         'commit_time': commit_time,
         'link_to_tree': link_to_tree,
         'repo_name': repo.name,
+        'include_parent': include_parent,
     }
 
 
