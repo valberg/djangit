@@ -5,10 +5,12 @@ from django.db import models
 
 from dulwich.repo import Repo
 
-from . import utils
+from .. import utils
+
+from .mixins import TimeStampedModel
 
 
-class Repository(models.Model):
+class DjangitRepository(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
@@ -40,7 +42,7 @@ class Repository(models.Model):
         if 'initial_commit' in kwargs:
             initial_commit = kwargs['initial_commit']
 
-        super(Repository, self).save()
+        super(DjangitRepository, self).save()
 
         # Only create the repo if the directory does not exist.
         if not os.path.exists(utils.get_repo_path(self.name)):
@@ -56,7 +58,7 @@ class Repository(models.Model):
 
         """
         shutil.rmtree(utils.get_repo_path(self.name))
-        super(Repository, self).delete()
+        super(DjangitRepository, self).delete()
 
     def get_repo_object(self):
         """

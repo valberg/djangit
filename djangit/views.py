@@ -10,7 +10,7 @@ from . import models, utils, forms
 
 
 class RepositoryList(ListView):
-    model = models.Repository
+    model = models.DjangitRepository
     template_name = 'djangit/list_repos.html'
     context_object_name = 'repos'
 
@@ -20,7 +20,7 @@ class RepositoryMixin(object):
 
     def get_object(self):
         name = self.kwargs['name']
-        return models.Repository.objects.get(name=name)
+        return models.DjangitRepository.objects.get(name=name)
 
 
 class RepositoryDetail(RepositoryMixin, DetailView):
@@ -162,7 +162,7 @@ class CreateRepoView(FormView):
         description = form.cleaned_data['description']
         initial_commit = form.cleaned_data['initial_commit']
 
-        repo = models.Repository(
+        repo = models.DjangitRepository(
             name=name,
             description=description,
         )
