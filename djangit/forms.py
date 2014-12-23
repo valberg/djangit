@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import DjangitRepository
+from .models import Repository
 
 
 class CreateRepoForm(forms.ModelForm):
@@ -11,7 +11,7 @@ class CreateRepoForm(forms.ModelForm):
     initial_commit = forms.BooleanField(required=False)
 
     class Meta:
-        model = DjangitRepository
+        model = Repository
 
     def clean_name(self):
         return self.cleaned_data['name'].replace(' ', '-')

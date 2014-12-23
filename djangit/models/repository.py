@@ -10,7 +10,7 @@ from .. import utils
 from .mixins import TimeStampedModel
 
 
-class DjangitRepository(TimeStampedModel):
+class Repository(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
@@ -23,6 +23,12 @@ class DjangitRepository(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    owner = models.ForeignKey('auth.User', null=True,
+                              blank=True, related_name='repositories')
+
+    group = models.ForeignKey('auth.Group', null=True,
+                              blank=True, related_name='repositories')
 
     class Meta:
         verbose_name = u'Repository'
@@ -42,7 +48,7 @@ class DjangitRepository(TimeStampedModel):
         if 'initial_commit' in kwargs:
             initial_commit = kwargs['initial_commit']
 
-        super(DjangitRepository, self).save()
+        super(Repository, self).save()
 
         # Only create the repo if the directory does not exist.
         if not os.path.exists(utils.get_repo_path(self.name)):
@@ -58,7 +64,7 @@ class DjangitRepository(TimeStampedModel):
 
         """
         shutil.rmtree(utils.get_repo_path(self.name))
-        super(DjangitRepository, self).delete()
+        super(Repository, self).delete()
 
     def get_repo_object(self):
         """

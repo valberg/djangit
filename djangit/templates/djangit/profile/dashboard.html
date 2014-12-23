@@ -1,0 +1,50 @@
+{% extends 'djangit/base.html' %}
+{% load djangit_tags %}
+
+{% block djangit_content %}
+
+<div class="row">
+  <div class="col-md-8">
+    {% for repo in user.repositories.all %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <a href="{% url 'djangit:show_repo' repo.name 'master' %}">{{ repo.name }}</a>
+          </h3>
+        </div>
+        <div class="panel-body">
+          {% if repo.description %}
+            {{ repo.description }}
+          {% else %}
+            No description.
+          {% endif %}
+          <hr />
+          {% if repo.has_commits %}
+            {% with repo.get_latest_commit as commit  %}
+              Message: {{ commit.message }}<br />
+              {% with commit.author|djangit_format_author as author %}
+                Author: {{ author.name }}<br />
+              {% endwith %}
+              <small class="muted">{{ repo.get_latest_commit_time|timesince }} ago</small>
+            {% endwith %}
+          {% else %}
+            No commits...
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Sidebar
+      </div>
+      <div class="panel-body">
+        Some stuff!
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
-from django.views.generic import FormView, ListView, DetailView
+from django.views.generic import FormView, ListView, DetailView, TemplateView
+from django.views.generic.edit import ProcessFormView
 
 from dulwich.repo import Tree
 from dulwich.walk import Walker
@@ -10,7 +11,7 @@ from . import models, utils, forms
 
 
 class RepositoryList(ListView):
-    model = models.DjangitRepository
+    model = models.Repository
     template_name = 'djangit/list_repos.html'
     context_object_name = 'repos'
 
@@ -20,7 +21,7 @@ class RepositoryMixin(object):
 
     def get_object(self):
         name = self.kwargs['name']
-        return models.DjangitRepository.objects.get(name=name)
+        return models.Repository.objects.get(name=name)
 
 
 class RepositoryDetail(RepositoryMixin, DetailView):
@@ -162,7 +163,7 @@ class CreateRepoView(FormView):
         description = form.cleaned_data['description']
         initial_commit = form.cleaned_data['initial_commit']
 
-        repo = models.DjangitRepository(
+        repo = models.Repository(
             name=name,
             description=description,
         )
@@ -170,3 +171,15 @@ class CreateRepoView(FormView):
         repo.save(initial_commit=initial_commit)
 
         return redirect(reverse('djangit:list_repos'))
+
+
+class FrontPageOrUserDashboard(TemplateView):
+    def get_template_names(self):
+        if self.request.user.is_authenticated():
+            return ['djangit/profile/dashboard.html']
+        else:
+            return ['djangit/frontpage.html']
+
+
+class LoginView(TemplateView):
+    template_name = 'djangit/login.html'

@@ -5,6 +5,9 @@ from . import views
 urlpatterns = patterns(
     '',
 
+    url(r'^login/',
+        views.LoginView.as_view(), name='login'),
+
     url(r'^create_repo/',
         views.CreateRepoView.as_view(), name='create_repo'),
 
@@ -27,5 +30,6 @@ urlpatterns = patterns(
         views.RepositoryDetail.as_view(), name='show_repo'),
 
     url(r'^$',
-        views.RepositoryList.as_view(), name='list_repos'),
+        views.FrontPageOrUserDashboard.as_view(),
+        name='frontpage-or-dashboard'),
 )

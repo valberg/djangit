@@ -3,7 +3,9 @@
 
 {% block djangit_content %}
 
-<a href="{% url 'djangit:create_repo' %}" class="btn btn-success">Create a repository</a>
+{% if user.is_authenticated %}
+  <a href="{% url 'djangit:create_repo' %}" class="btn btn-success">Create a repository</a>
+{% endif %}
 <hr />
 
 {% for repo in repos %}
