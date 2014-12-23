@@ -33,7 +33,9 @@
 
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       <ul class="nav navbar-nav">
-        <li><a href="/">Repo list</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="/">Dashboard</a></li>
+        {% endif %}
       </ul>
 
       <ul class="nav navbar-nav navbar-right">

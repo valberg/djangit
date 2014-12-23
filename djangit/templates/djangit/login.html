@@ -1,11 +1,11 @@
 {% extends 'djangit/base.html' %}
 
 {% block djangit_content %}
-  <form method="post">
+  <form method="post">{% csrf_token %}
     <div class="form-group">
-      <input type="text" class="form-control" name="username" placeholder="Username"/>
-      <input type="password" class="form-control" name="password" placeholder="Password"/>
+      {{ form }}
       <button class="btn btn-primary">Login</button>
     </div>
   </form>
+
 {% endblock %}

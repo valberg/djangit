@@ -1,6 +1,7 @@
-from django.core.urlresolvers import reverse
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.urlresolvers import reverse_lazy
 from django.views.generic import FormView, ListView, DetailView, TemplateView
-from django.views.generic.edit import ProcessFormView
 
 from dulwich.repo import Tree
 from dulwich.walk import Walker
@@ -181,5 +182,11 @@ class FrontPageOrUserDashboard(TemplateView):
             return ['djangit/frontpage.html']
 
 
-class LoginView(TemplateView):
+class LoginView(FormView):
     template_name = 'djangit/login.html'
+    form_class = AuthenticationForm
+    success_url = reverse_lazy('djangit:frontpage-or-dashboard')
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        return super(LoginView, self).form_valid(form)
