@@ -1,6 +1,6 @@
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic import FormView, ListView, DetailView, TemplateView
 
 from dulwich.repo import Tree
@@ -167,11 +167,12 @@ class CreateRepoView(FormView):
         repo = models.Repository(
             name=name,
             description=description,
+            owner=self.request.user,
         )
 
         repo.save(initial_commit=initial_commit)
 
-        return redirect(reverse('djangit:list_repos'))
+        return redirect(reverse('djangit:frontpage-or-dashboard'))
 
 
 class FrontPageOrUserDashboard(TemplateView):

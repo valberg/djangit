@@ -12,6 +12,7 @@ class CreateRepoForm(forms.ModelForm):
 
     class Meta:
         model = Repository
+        fields = ['name', 'description', 'initial_commit']
 
     def clean_name(self):
         return self.cleaned_data['name'].replace(' ', '-')

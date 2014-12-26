@@ -1,33 +1,21 @@
-"""
-Django settings for djangit_project project.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.7/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.7/ref/settings/
-"""
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import environ
+
+env = environ.Env(DEBUG=(bool, False),)
+environ.Env.read_env()
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0i!$%4j71hi*$lk^w$wwecg(wcqz7f7^keg25$m#z62%i*n!s('
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
-
-
-# Application definition
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -61,10 +49,7 @@ WSGI_APPLICATION = 'djangit_project.wsgi.application'
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': env.db(),
 }
 
 # Internationalization
@@ -87,4 +72,4 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-GIT_REPOS_DIR = '/home/vagrant/repositories/'
+DJANGIT_REPOS_DIR = env('DJANGIT_REPOS_DIR')

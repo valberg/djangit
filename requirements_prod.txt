@@ -1,0 +1,2 @@
+-e requirements_base.txt
+uwsgi==2.0.8

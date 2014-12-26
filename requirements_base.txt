@@ -2,3 +2,5 @@ Django==1.7.1
 dulwich==0.9.8
 commonmark==0.5.4
 django_extensions==1.4.9
+django-environ==0.3.0
+psycopg2==2.5.4
