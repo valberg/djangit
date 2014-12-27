@@ -31,6 +31,19 @@ Add this to your `INSTALLED_APPS` in settings.py:
 
     'django.contrib.markup',
     'djangit',
+    
+## On DigitalOcean
+Using Ansible you can get Djangit running on a DigitalOcean instance with just one command 
+(not counting cloning and setting up a virtualenv)!
+
+1. `git clone https://github.com/valberg/djangit.git`
+2. `cd djangit/`
+3. Create a virtualenv
+4. In virtualenv: `pip install -r requirements_dev.txt`
+5. `cd ansible/`
+6. `mv digital_ocean_credentials.yml.template digital_ocean_credentials.yml`
+7. Add `client_id`, `api_key` and `ssh_key_ids` to `digital_ocean_credentials.yml` (more details in the file)
+8. Deploy: `ansible-playbook -i localhost, digital_ocean.yml`
 
 # License
 We need a license!
