@@ -10,7 +10,7 @@ from dulwich import walk
 
 
 def get_repo_path(repo_name):
-    return os.path.join(settings.GIT_REPOS_DIR, '{}.git'.format(repo_name))
+    return os.path.join(settings.DJANGIT_REPOS_DIR, '{}.git'.format(repo_name))
 
 
 def seperate_tree_entries(tree, repo, path=None):
