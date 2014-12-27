@@ -1,0 +1,6 @@
+description "git server for djangit"
+start on runlevel [2345]
+stop on runlevel [06]
+setuid git
+setgid git
+exec /srv/djangit/virtualenv/bin/python /srv/djangit/djangit_project/manage.py git_server

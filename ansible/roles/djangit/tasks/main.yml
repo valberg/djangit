@@ -22,7 +22,11 @@
 
 - template:
     src: djangit_upstart.conf.j2
-    dest: /etc/init/uwsgi-djangit.conf
+    dest: /etc/init/djangit-uwsgi.conf
+
+- template:
+    src: djangit_server_upstart.conf.j2
+    dest: /etc/init/djangit-git-server.conf
 
 - template:
     src: djangit_uwsgi_conf.ini.j2
@@ -42,7 +46,11 @@
     state: restarted
 
 - service:
-    name: uwsgi-djangit
+    name: djangit-uwsgi
+    state: restarted
+
+- service:
+    name: djangit-git-server
     state: restarted
 
 - django_manage:
