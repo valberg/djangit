@@ -1,0 +1,26 @@
+upstream djangit_app {
+  server unix:///srv/djangit/djangit.sock;
+}
+
+server {
+  listen 80;
+  server_name {{ hostnames }};
+
+  access_log   /var/log/nginx/djangit.access_log;
+  error_log   /var/log/nginx/djangit.error_log;
+
+  location / {
+    include uwsgi_params;
+    uwsgi_pass djangit_app;
+  }
+
+  location /static {
+    alias /srv/djangit/djangit_project/static/;
+    autoindex off;
+  }
+
+  location /media {
+    alias /srv/djangit/djangit_project/media/;
+    autoindex off;
+  }
+}

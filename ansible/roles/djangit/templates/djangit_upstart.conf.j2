@@ -1,0 +1,4 @@
+description "uwsgi for djangit"
+start on runlevel [2345]
+stop on runlevel [06]
+exec uwsgi /srv/djangit/uwsgi_conf.ini --die-on-term

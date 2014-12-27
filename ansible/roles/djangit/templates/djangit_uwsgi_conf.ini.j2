@@ -1,0 +1,14 @@
+[uwsgi]
+uid={{ git_user }}
+gid={{ git_user }}
+home=/srv/djangit/virtualenv
+chdir=/srv/djangit/djangit_project
+module=djangit_project.wsgi:application
+master=True
+pidfile2=/srv/djangit/djangit.pid
+touch-reload=True
+vacuum=True
+max-requests=5000
+socket=/srv/djangit/djangit.sock
+chmod-socket=666
+logto=/tmp/djangit.log

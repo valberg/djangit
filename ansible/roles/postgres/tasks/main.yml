@@ -1,0 +1,25 @@
+---
+
+- apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql-9.3
+    - postgresql-server-dev-9.3
+
+- name: Install psycopg2 systemwide
+  pip:
+    name: "psycopg2"
+
+- postgresql_user:
+    name: djangit
+    password: "{{ db_password }}"
+  sudo: yes
+  sudo_user: postgres
+
+- postgresql_db:
+    name: djangit
+    owner: djangit
+  sudo: yes
+  sudo_user: postgres
+

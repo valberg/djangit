@@ -1,0 +1,56 @@
+---
+
+- git:
+    repo: https://github.com/valberg/djangit.git
+    dest: /srv/djangit
+
+- file:
+    state: directory
+    recurse: yes
+    owner: "{{ git_user }}"
+    group: "{{ git_user }}"
+    path: "/srv/djangit"
+
+- pip:
+    virtualenv: /srv/djangit/virtualenv
+    requirements: /srv/djangit/requirements_prod.txt
+    chdir: /srv/djangit
+
+- template:
+    src: env.j2
+    dest: /srv/djangit/djangit_project/djangit_project/.env
+
+- template:
+    src: djangit_upstart.conf.j2
+    dest: /etc/init/uwsgi-djangit.conf
+
+- template:
+    src: djangit_uwsgi_conf.ini.j2
+    dest: /srv/djangit/uwsgi_conf.ini
+
+- template:
+    src: djangit_nginx_site.j2
+    dest: /etc/nginx/sites-available/djangit
+
+- file:
+    state: link
+    src: /etc/nginx/sites-available/djangit
+    path: /etc/nginx/sites-enabled/djangit
+
+- service:
+    name: nginx
+    state: restarted
+
+- service:
+    name: uwsgi-djangit
+    state: restarted
+
+- django_manage:
+    app_path: /srv/djangit/djangit_project/
+    command: migrate
+    virtualenv: /srv/djangit/virtualenv/
+
+- django_manage:
+    app_path: /srv/djangit/djangit_project/
+    command: collectstatic
+    virtualenv: /srv/djangit/virtualenv/

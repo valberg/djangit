@@ -1,0 +1,44 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: false
+  vars_files:
+  - digital_ocean_credits.yml
+
+  tasks:
+  - digital_ocean:
+      state: present
+      command: droplet
+      name: djangit
+      client_id: "{{client_id}}"
+      api_key: "{{api_key}}"
+      ssh_key_ids: "{{ssh_key_ids}}"
+      size_id: 66
+      region_id: 9
+      image_id: 6918990
+      wait_timeout: 500
+    register: djangit
+
+  - add_host: name={{ djangit.droplet.ip_address }} groupname=launched
+
+  - debug: msg="ID is {{ djangit.droplet.id }}"
+  - debug: msg="IP is {{ djangit.droplet.ip_address }}"
+
+- hosts: launched
+  remote_user: root
+  gather_facts: false
+
+  vars:
+    debug: "False"
+    git_user: "git"
+    db_password: "{{ lookup('password', '/tmp/db_password length=15 chars=ascii_letters,digits') }}"
+    secret_key: "{{ lookup('password', '/tmp/secret_key length=32 chars=ascii_letters,digits') }}"
+    hostnames: "{{inventory_hostname}}"
+    allowed_hosts: "{{inventory_hostname}}"
+    repos_dir: "/home/{{ git_user }}/repositories/"
+
+  roles:
+  - base
+  - postgres
+  - gitolite
+  - djangit

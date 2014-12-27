@@ -1,0 +1,8 @@
+# Get your client_id and api_key from https://cloud.digitalocean.com/api_access
+# Use those to get your ssh_key_ids like this:
+#
+# curl https://api.digitalocean.com/v1/ssh_keys/\?client_id=<client_id here>\&api_key=<api_key here> | python -m json.tool
+
+client_id: <client_id>
+api_key: <api_key>
+ssh_key_ids: <ssh_key_ids>

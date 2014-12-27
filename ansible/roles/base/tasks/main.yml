@@ -1,0 +1,28 @@
+---
+- name: Update and upgrade system via apt
+  apt:
+    update_cache: yes
+    upgrade: full
+
+- name: Install basic requirements
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - nginx
+
+- name: Install uwsgi systemwide
+  pip:
+    name: uwsgi
+
+- name: "Create {{ git_user }} group"
+  group:
+    name: "{{ git_user }}"
+
+- name: "Create {{ git_user }} user"
+  user:
+    name: "{{ git_user }}"
+    group: "{{ git_user }}"
