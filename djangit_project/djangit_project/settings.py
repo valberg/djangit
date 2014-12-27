@@ -7,7 +7,6 @@ environ.Env.read_env()
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -15,7 +14,7 @@ DEBUG = env('DEBUG')
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+ALLOWED_HOSTS = [x for x in env('ALLOWED_HOSTS').split(',') if x]
 
 INSTALLED_APPS = (
     'django.contrib.auth',
