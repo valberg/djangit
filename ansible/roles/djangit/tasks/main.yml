@@ -62,3 +62,9 @@
     app_path: /srv/djangit/djangit_project/
     command: collectstatic
     virtualenv: /srv/djangit/virtualenv/
+
+- name: Create superuser
+  command: /srv/djangit/virtualenv/bin/python -c 'import os;os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djangit_project.settings");import django;from django.contrib.auth.models import User;django.setup();User.objects.create_superuser("{{admin_name}}", "","{{admin_pass}}")'
+  args:
+    chdir: /srv/djangit/djangit_project/
+

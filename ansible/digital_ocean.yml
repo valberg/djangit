@@ -37,8 +37,11 @@
     allowed_hosts: "{{inventory_hostname}}"
     repos_dir: "/home/{{ git_user }}/repositories/"
 
+  vars_prompt:
+    admin_pass: "Password for admin?"
+    admin_name: "Username for admin?"
+
   roles:
   - base
   - postgres
-  - gitolite
   - djangit

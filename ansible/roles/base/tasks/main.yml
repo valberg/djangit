@@ -13,6 +13,7 @@
     - python-pip
     - python-virtualenv
     - nginx
+    - git
 
 - name: Install uwsgi systemwide
   pip:

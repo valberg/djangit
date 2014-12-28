@@ -1,8 +1,0 @@
----
-
-- apt:
-    name: gitolite3
-    state: latest
-
-- command: gitolite setup -a djangit
-  sudo_user: "{{ git_user }}"
