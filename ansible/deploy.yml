@@ -1,0 +1,16 @@
+---
+- hosts: all
+  remote_user: root
+  gather_facts: false
+
+  vars:
+    debug: "False"
+    git_user: "git"
+    db_password: "{{ lookup('password', '/tmp/db_password length=15 chars=ascii_letters,digits') }}"
+    secret_key: "{{ lookup('password', '/tmp/secret_key length=32 chars=ascii_letters,digits') }}"
+    hostnames: "{{inventory_hostname}}"
+    allowed_hosts: "{{inventory_hostname}}"
+    repos_dir: "/home/{{ git_user }}/repositories/"
+
+  roles:
+  - djangit
